@@ -15,19 +15,28 @@ const initialState = {
     }
 };
 
-// Phase 1.2: Basic Listener Implementation
-// This function uses a Proxy to "listen" for changes and log them[cite: 72, 73, 86].
+// Phase 1.3: UI Signal Function
+// This function looks for an HTML element and updates its text if it exists.
+function updateUI(property, value) {
+    const element = document.getElementById(`sig-${property}`);
+    if (element) {
+        element.textContent = value;
+        console.log(`%c Signal: Updated DOM element #sig-${property}`, "color: #28a745;");
+    }
+}
+
+// Phase 1.2: Basic Listener (Enhanced for Phase 1.3)
 function createPersistentState(state) {
     return new Proxy(state, {
         set(target, property, value) {
-            console.log(`%c State Change Detected: ${property} updated to:`, "color: #007bff; font-weight: bold;", value);
             target[property] = value;
+            // Phase 1.3 Trigger: Update the UI whenever a property changes
+            updateUI(property, value);
+            
+            console.log(`%c State Change: ${property} ->`, "color: #007bff; font-weight: bold;", value);
             return true;
         }
     });
 }
 
-// CRITICAL: Initialize appState as a Proxy to enable listening [cite: 70, 83]
 window.appState = createPersistentState(initialState);
-
-console.log("Global State & Listener Initialized. Try testing in the console!");
