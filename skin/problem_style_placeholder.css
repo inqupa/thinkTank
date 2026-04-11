@@ -1,0 +1,15 @@
+/* Resets browser defaults */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    background-color: #ffffff;
+}
+
+/* Provides a full-screen controllable area */
+.empty-container {
+    min-height: 100vh;
+    width: 100%;
+    display: block;
+}

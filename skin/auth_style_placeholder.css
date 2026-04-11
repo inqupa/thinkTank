@@ -1,0 +1,46 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: sans-serif;
+}
+
+/* Centers the two boxes on the screen */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    gap: 50px;
+}
+
+/* Individual box styling */
+.auth-box {
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+}
+
+/* Form element layout */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+input {
+    padding: 10px;
+    font-size: 1rem;
+}
+
+button {
+    padding: 10px;
+    cursor: pointer;
+}
+
+/* Vertical line between forms */
+.divider {
+    width: 1px;
+    height: 300px;
+    background-color: #ccc;
+}

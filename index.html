@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vent</title>
+    <link rel="stylesheet" href="/skin/base.css">
+</head>
+<body>
+
+    <div class="main-container">
+        <div class="logo-section">
+            <h1 class="faded-logo">VENT</h1>
+        </div>
+
+        <div class="input-section">
+            <input type="text" placeholder="vent here...">
+            <button type="button">Submit</button>
+        </div>
+    </div>
+<script src="/subsystems/router.js"></script>
+<script>
+    // Finds the button and tells it to go to the auth page when clicked
+    document.querySelector('button').addEventListener('click', function() {
+        window.location.href = '/skeleton/problem_placeholder.html';
+    });
+</script>
+</body>
+</html>

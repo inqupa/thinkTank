@@ -1,0 +1,52 @@
+/* Removes default browser margins */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: sans-serif;
+}
+
+/* The master container covering the full screen */
+.main-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100vw;
+}
+
+/* Top 50% of the screen */
+.logo-section {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Large faded text styling */
+.faded-logo {
+    font-size: 10rem;
+    color: rgba(0, 0, 0, 0.1);
+    margin: 0;
+}
+
+/* Bottom 50% of the screen */
+.input-section {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start; /* Keeps items at the top of the lower half */
+    gap: 10px;
+}
+
+/* Basic sizing for the input field */
+input {
+    padding: 10px;
+    font-size: 1rem;
+}
+
+/* Basic sizing for the button */
+button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+}
