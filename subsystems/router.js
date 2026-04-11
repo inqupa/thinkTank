@@ -1,7 +1,9 @@
-// Phase 3.1: Custom Nav Component
+// Phase 3.2: Shadow DOM Implementation
 class NavBar extends HTMLElement {
     constructor() {
         super();
+        // Attach a shadow root to the element 
+        this.attachShadow({ mode: 'open' });
     }
 
     connectedCallback() {
@@ -13,23 +15,46 @@ class NavBar extends HTMLElement {
             { name: "Profile", href: "/skeleton/profile_placeholder.html" }
         ];
 
-        this.innerHTML = `
-            <nav style="background: #333; padding: 10px; display: flex; justify-content: center;">
+        // The innerHTML is now set on the shadowRoot, not the element itself
+        this.shadowRoot.innerHTML = `
+            <style>
+                /* These styles are now encapsulated and won't leak out  */
+                nav {
+                    background: #333;
+                    padding: 10px;
+                    display: flex;
+                    justify-content: center;
+                }
+                .nav-links a {
+                    color: rgba(255, 255, 255, 0.6);
+                    text-decoration: none;
+                    margin: 0 15px;
+                    font-family: sans-serif;
+                    font-weight: bold;
+                    transition: color 0.3s ease;
+                }
+                .nav-links a:hover, .nav-links a.active {
+                    color: white;
+                    text-decoration: underline;
+                }
+                .nav-links a.active {
+                    border-bottom: 2px solid white;
+                    padding-bottom: 2px;
+                }
+            </style>
+            <nav>
                 <div class="nav-links">
                     ${links.map(link => {
                         const isActive = currentPath.endsWith(link.href) ? 'class="active"' : '';
-                        return `<a href="${link.href}" ${isActive} style="color: rgba(255, 255, 255, 0.6); text-decoration: none; margin: 0 15px; font-family: sans-serif; font-weight: bold; transition: color 0.3s ease;">${link.name}</a>`;
+                        return `<a href="${link.href}" ${isActive}>${link.name}</a>`;
                     }).join('')}
                 </div>
             </nav>
-            <style>
-                .nav-links a:hover, .nav-links a.active { color: white !important; text-decoration: underline !important; }
-                .nav-links a.active { border-bottom: 2px solid white; padding-bottom: 2px; }
-            </style>
         `;
-        console.log("%c Web Component: <nav-bar> initialized", "color: #20c997; font-weight: bold;");
+        console.log("%c Shadow DOM: <nav-bar> encapsulated", "color: #20c997; font-weight: bold;");
     }
 }
 
-// Register the custom element
-customElements.define('nav-bar', NavBar);
+if (!customElements.get('nav-bar')) {
+    customElements.define('nav-bar', NavBar);
+}
