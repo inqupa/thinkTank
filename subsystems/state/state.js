@@ -39,4 +39,17 @@ function createPersistentState(state) {
     });
 }
 
+// Phase 1.4: User Data Template
+// This function returns a dynamic HTML string based on the current user state.
+function renderProfileHeader() {
+    const { name, bio } = window.appState.user;
+    return `
+        <div class="profile-picture"></div>
+        <h1 class="username" id="sig-name">${name}</h1>
+        <p class="bio" id="sig-bio">${bio}</p>
+    `;
+}
+
+console.log("Template function renderProfileHeader() is ready.");
+
 window.appState = createPersistentState(initialState);
