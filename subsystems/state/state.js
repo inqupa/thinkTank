@@ -1,55 +1,56 @@
-// Phase 1.1: Global State Object
+// Phase 2.2 Refined: Global State with Persistence
 const initialState = {
-    user: {
-        name: "User Name",
-        email: "user@example.com",
-        location: "City, Country",
-        bio: "Short bio or user description goes here.",
-        joined: "January 2026",
-        isLoggedIn: false,
-        visitCount: 0
-    },
-    ui: {
-        theme: "light",
-        currentView: "landing"
-    }
+    name: "User Name",
+    bio: "Short bio goes here.",
+    theme: localStorage.getItem('theme') || "light", // Pull saved theme or default to light
+    visitCount: 0
 };
 
-// Phase 1.3: UI Signal Function
-// This function looks for an HTML element and updates its text if it exists.
 function updateUI(property, value) {
+    if (property === "theme") {
+        if (document.body) {
+            document.body.setAttribute('data-theme', value);
+            localStorage.setItem('theme', value); // Save to browser memory
+            console.log(`%c Signal: Theme applied -> ${value}`, "color: #28a745;");
+        }
+        return;
+    }
+
     const element = document.getElementById(`sig-${property}`);
     if (element) {
         element.textContent = value;
-        console.log(`%c Signal: Updated DOM element #sig-${property}`, "color: #28a745;");
     }
 }
 
-// Phase 1.2: Basic Listener (Enhanced for Phase 1.3)
 function createPersistentState(state) {
     return new Proxy(state, {
         set(target, property, value) {
             target[property] = value;
-            // Phase 1.3 Trigger: Update the UI whenever a property changes
             updateUI(property, value);
-            
-            console.log(`%c State Change: ${property} ->`, "color: #007bff; font-weight: bold;", value);
             return true;
         }
     });
 }
 
-// Phase 1.4: User Data Template
-// This function returns a dynamic HTML string based on the current user state.
-function renderProfileHeader() {
-    const { name, bio } = window.appState.user;
-    return `
-        <div class="profile-picture"></div>
-        <h1 class="username" id="sig-name">${name}</h1>
-        <p class="bio" id="sig-bio">${bio}</p>
-    `;
+window.appState = createPersistentState(initialState);
+
+// Time-Based Auto-Detection
+function applyTimeTheme() {
+    // Only auto-suggest if no manual theme is saved yet
+    if (!localStorage.getItem('theme')) {
+        const hour = new Date().getHours();
+        const suggestedTheme = (hour < 6 || hour > 18) ? "dark" : "light";
+        window.appState.theme = suggestedTheme;
+    }
 }
 
-console.log("Template function renderProfileHeader() is ready.");
-
-window.appState = createPersistentState(initialState);
+// Global Execution on Load
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+        updateUI("theme", window.appState.theme); 
+        applyTimeTheme();
+    });
+} else {
+    updateUI("theme", window.appState.theme);
+    applyTimeTheme();
+}
