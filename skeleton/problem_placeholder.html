@@ -3,16 +3,41 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blank Page</title>
-    <link rel="stylesheet" href="/skin/base.css">
-    <link rel="stylesheet" href="/skin/problem_style_placeholder.css">
-    <script src="/subsystems/state/state.js"></script>
+    <title>Problems</title>
+    <link rel="stylesheet" href="../skin/base.css">
+    <link rel="stylesheet" href="../skin/problem_style_placeholder.css">
+    <script src="../subsystems/state/state.js"></script>
 </head>
 <body>
 
-    <div class="empty-container">fsd
+    <div class="empty-container">
+        <div id="suggestion-box" style="display: none; padding: 20px; margin: 20px; border: 2px solid #007bff; border-radius: 8px; text-align: center; color: var(--text-color);">
+            <h3>Ready to save your vents?</h3>
+            <p>We noticed you've been exploring. Create an account to keep track of your problems!</p>
+            <button onclick="window.location.href='auth_placeholder.html'">Sign Up Now</button>
+            <button id="dismiss-suggestion" style="background: none; border: none; color: #888; text-decoration: underline; cursor: pointer; margin-left: 10px;">Not now</button>
         </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (!window.appState) return;
 
-<script src="/subsystems/router.js"></script>
+            // TRIGGER 2: Increment count simply for visiting this page
+            window.appState.visitCount++;
+
+            // Show box if count > 3 AND user hasn't dismissed it
+            if (window.appState.visitCount > 3 && !window.appState.dismissedSuggestion) {
+                const box = document.getElementById('suggestion-box');
+                if (box) box.style.display = 'block';
+            }
+
+            // Handle the "Not Now" choice
+            document.getElementById('dismiss-suggestion').addEventListener('click', () => {
+                window.appState.dismissedSuggestion = true;
+                document.getElementById('suggestion-box').style.display = 'none';
+            });
+        });
+    </script>
+    <script src="../subsystems/router.js"></script>
 </body>
 </html>

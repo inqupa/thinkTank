@@ -28,16 +28,15 @@
     </script>
     <script>
         // Phase 2.1: Predictive Hover Logic
-        // Detects when the user might be about to click and prepares the state.
         const submitBtn = document.querySelector('.input-section button');
 
         if (submitBtn) {
             submitBtn.addEventListener('mouseenter', () => {
-                console.log("%c Predictive Signal: User hovering on Submit. Preparing assets...", "color: #6f42c1; font-weight: bold;");
+                console.log("%c Predictive Signal: Preparing assets...", "color: #6f42c1;");
                 
-                // Increment visitCount or trigger a state change to signal intent
-                if (window.appState && window.appState.user) {
-                    window.appState.user.visitCount++;
+                // FIXED: Removed '.user' to match your actual state structure
+                if (window.appState) {
+                    window.appState.visitCount++;
                 }
             });
         }

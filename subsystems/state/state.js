@@ -2,24 +2,31 @@
 const initialState = {
     name: "User Name",
     bio: "Short bio goes here.",
-    theme: localStorage.getItem('theme') || "light", // Pull saved theme or default to light
-    visitCount: 0
+    theme: localStorage.getItem('theme') || "light",
+    // Persisted visit count and dismissal status
+    visitCount: parseInt(localStorage.getItem('visitCount')) || 0,
+    dismissedSuggestion: localStorage.getItem('dismissedSuggestion') === 'true'
 };
 
 function updateUI(property, value) {
     if (property === "theme") {
         if (document.body) {
             document.body.setAttribute('data-theme', value);
-            localStorage.setItem('theme', value); // Save to browser memory
-            console.log(`%c Signal: Theme applied -> ${value}`, "color: #28a745;");
+            localStorage.setItem('theme', value);
         }
         return;
     }
+    
+    if (property === "visitCount") {
+        localStorage.setItem('visitCount', value);
+    }
+
+    if (property === "dismissedSuggestion") {
+        localStorage.setItem('dismissedSuggestion', value);
+    }
 
     const element = document.getElementById(`sig-${property}`);
-    if (element) {
-        element.textContent = value;
-    }
+    if (element) { element.textContent = value; }
 }
 
 function createPersistentState(state) {
