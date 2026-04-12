@@ -11,8 +11,7 @@
 <body>
     <nav-bar></nav-bar>
     <div class="profile-container">
-        <div id="profile-header-container"></div>
-
+        <user-card></user-card>
         <div class="profile-details">
             <div class="detail-item">
                 <strong>Email:</strong> <span>user@example.com</span>
@@ -24,20 +23,10 @@
                 <strong>Joined:</strong> <span>January 2026</span>
             </div>
         </div>
-
         <div class="profile-actions">
             <button type="button">Edit Profile</button>
         </div>
     </div>
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const container = document.getElementById('profile-header-container');
-            if (container && typeof renderProfileHeader === 'function') {
-                container.innerHTML = renderProfileHeader();
-                console.log("%c Phase 1.5: Profile Header Injected", "color: #ffc107; font-weight: bold;");
-            }
-        });
-    </script>
     <script src="/subsystems/router.js"></script>
 </body>
 </html>

@@ -34,6 +34,7 @@ function createPersistentState(state) {
         set(target, property, value) {
             target[property] = value;
             updateUI(property, value);
+            window.dispatchEvent(new Event('stateChange'));
             return true;
         }
     });

@@ -74,3 +74,60 @@ class NavBar extends HTMLElement {
 if (!customElements.get('nav-bar')) {
     customElements.define('nav-bar', NavBar);
 }
+
+// Phase 3.4: Componentize the Profile Card
+class UserCard extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+    }
+
+    connectedCallback() {
+        this.render();
+        
+        // Listen for global state changes to update automatically
+        window.addEventListener('stateChange', () => this.render());
+    }
+
+    render() {
+        // Fallback data if appState isn't ready
+        const name = window.appState?.name || "User Name";
+        const bio = window.appState?.bio || "Short bio goes here.";
+
+        this.shadowRoot.innerHTML = `
+            <style>
+                .header {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    margin-bottom: 20px;
+                }
+                .profile-picture {
+                    width: 150px;
+                    height: 150px;
+                    background-color: #ddd;
+                    border-radius: 50%;
+                    margin-bottom: 20px;
+                }
+                .username { 
+                    margin: 10px 0; 
+                    color: var(--text-color, #333);
+                }
+                .bio { 
+                    color: #666; 
+                    text-align: center; 
+                    margin-bottom: 10px;
+                }
+            </style>
+            <div class="header">
+                <div class="profile-picture"></div>
+                <h1 class="username">${name}</h1>
+                <p class="bio">${bio}</p>
+            </div>
+        `;
+    }
+}
+
+if (!customElements.get('user-card')) {
+    customElements.define('user-card', UserCard);
+}
