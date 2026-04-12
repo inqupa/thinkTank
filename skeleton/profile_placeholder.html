@@ -1,32 +1,32 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Profile</title>
-    <link rel="stylesheet" href="/skin/base.css">
-    <link rel="stylesheet" href="/skin/profile_style_placeholder.css">
-    <script src="/subsystems/state/state.js"></script>
-</head>
-<body>
-    <nav-bar></nav-bar>
-    <div class="profile-container">
-        <user-card></user-card>
-        <div class="profile-details">
-            <div class="detail-item">
-                <strong>Email:</strong> <span>user@example.com</span>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>User Profile</title>
+        <link rel="stylesheet" href="/skin/base.css">
+        <link rel="stylesheet" href="/skin/profile_style_placeholder.css">
+        <script src="/subsystems/state/state.js"></script>
+    </head>
+    <body>
+        <nav-bar></nav-bar>
+        <div class="profile-container">
+            <user-card></user-card>
+            <div class="profile-details">
+                <div class="detail-item">
+                    <strong>Email:</strong> <span>user@example.com</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Location:</strong> <span>City, Country</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Joined:</strong> <span>January 2026</span>
+                </div>
             </div>
-            <div class="detail-item">
-                <strong>Location:</strong> <span>City, Country</span>
-            </div>
-            <div class="detail-item">
-                <strong>Joined:</strong> <span>January 2026</span>
+            <div class="profile-actions">
+                <button type="button">Edit Profile</button>
             </div>
         </div>
-        <div class="profile-actions">
-            <button type="button">Edit Profile</button>
-        </div>
-    </div>
-    <script src="/subsystems/router.js"></script>
-</body>
+        <script src="/subsystems/router.js"></script>
+    </body>
 </html>

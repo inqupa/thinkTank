@@ -3,7 +3,6 @@ body, html {
     padding: 0;
     height: 100%;
     font-family: sans-serif;
-    background-color: var(--bg-color);
 }
 
 /* Phase 2.2 Fix: Adaptive Profile Card */
@@ -22,7 +21,6 @@ body, html {
 .profile-picture {
     width: 150px;
     height: 150px;
-    background-color: #ddd;
     border-radius: 50%;
     margin-bottom: 20px;
 }
@@ -66,8 +64,6 @@ body, html {
 button {
     padding: 10px 25px;
     cursor: pointer;
-    background-color: #007bff;
-    color: white;
     border: none;
     border-radius: 4px;
 }

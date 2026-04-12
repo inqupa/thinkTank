@@ -31,7 +31,7 @@ class NavBar extends HTMLElement {
         const links = [
             { name: "Home", href: "/index.html" },
             { name: "Vents | Problems", href: "/skeleton/problem_placeholder.html" },
-            { name: "Login | Sign-up", href: "/skeleton/auth_placeholder.html" },
+            { name: "Login", href: "/skeleton/auth_placeholder.html" },
             { name: "Profile", href: "/skeleton/profile_placeholder.html" }
         ];
 

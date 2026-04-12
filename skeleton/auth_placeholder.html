@@ -1,29 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login & Sign Up</title>
-    <link rel="stylesheet" href="/skin/base.css">
-    <link rel="stylesheet" href="/skin/auth_style_placeholder.css">
-    <script src="/subsystems/state/state.js"></script>
-</head>
-<body>
-    <nav-bar></nav-bar>
-    <div class="auth-container">
-        <h1 style="color: var(--text-primary);">Join the Think Tank</h1>
-        <form aria-labelledby="auth-heading">
-            <div class="input-group">
-                <label for="email" style="display: block; margin-bottom: var(--spacing-unit);">Email Address</label>
-                <input type="email" id="email" placeholder="e.g., name@example.com" required 
-                    style="width: 100%; padding: 12px; border: 1px solid var(--accent-color); border-radius: 4px;">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Login & Sign Up</title>
+        <link rel="stylesheet" href="/skin/base.css">
+        <link rel="stylesheet" href="/skin/auth_style_placeholder.css">
+        <script src="/subsystems/state/state.js"></script>
+    </head>
+    <body>
+        <nav-bar></nav-bar>
+        <div class="auth-container">
+            <h1 id="auth-heading" style="color: var(--text-primary); margin-bottom: 10px;">Welcome to Vent</h1>
+            
+            <p style="color: var(--text-primary); opacity: 0.7; margin-bottom: 30px; line-height: 1.5;">
+                Enter your email. If you're new, we'll create your secure node instantly. No passwords, no friction.
+            </p>
+            
+            <form aria-labelledby="auth-heading">
+                <div class="input-group">
+                    <label for="email" style="color: var(--text-primary); font-size: 0.9rem; font-weight: bold;">Work or Personal Email</label>
+                    <input type="email" id="email" autofocus placeholder="name@example.com" required>
+                </div>
+                
+                <button type="submit">Get Magic Link</button>
+            </form>
+
+            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(128, 128, 128, 0.1);">
+                <p style="font-size: 0.8rem; color: var(--text-primary); opacity: 0.5;">
+                    By entering, you contribute to a collective database of solved problems.
+                </p>
             </div>
-            <button type="submit" style="margin-top: 20px; padding: 12px 24px; background: var(--accent-color); color: white; border: none; border-radius: 4px; cursor: pointer;">
-                Continue
-            </button>
-        </form>
-        <p style="font-size: 0.9rem; margin-top: 15px;">No complex passwords required. We use secure magic links.</p>
-    </div>
-<script src="/subsystems/router.js"></script>
-</body>
+        </div>
+        <script>
+            const emailInput = document.getElementById('email');
+            const authBtn = document.querySelector('button');
+
+            emailInput.addEventListener('input', (e) => {
+                const value = e.target.value.trim();
+
+                // Check if the input looks like an email and has content
+                if (value.includes('@') && value.length > 5) {
+                    authBtn.textContent = "Secure Your Access";
+                    authBtn.style.filter = "brightness(1.1)";
+                    authBtn.style.transform = "scale(1.02)";
+                } else {
+                    // Immediately revert if the email is invalid or erased
+                    authBtn.textContent = "Get Magic Link";
+                    authBtn.style.filter = "brightness(1.0)";
+                    authBtn.style.transform = "scale(1.0)";
+                }
+            });
+
+            // Reset UI specifically after a form "submission" (simulated)
+            document.querySelector('form').addEventListener('submit', (e) => {
+                // In a real app, this is where your API call happens
+                setTimeout(() => {
+                    authBtn.textContent = "Get Magic Link";
+                    emailInput.value = "";
+                }, 500);
+            });
+        </script>
+        <script>
+            // Force focus on page load to ensure "Always Ready" state
+            window.addEventListener('load', () => {
+                const input = document.querySelector('#vent-input') || document.querySelector('#email');
+                if (input) input.focus();
+            });
+        </script>
+        <script src="/subsystems/router.js"></script>
+    </body>
 </html>

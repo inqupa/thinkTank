@@ -1,45 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>vent | your problem</title>
-    <link rel="stylesheet" href="skin/base.css">
-    <script src="subsystems/state/state.js"></script>
-</head>
-<body>
-    <nav-bar></nav-bar>
-    <div class="main-container">
-        <div class="logo-section">
-            <h1 class="faded-logo">VENT</h1>
-        </div>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>vent | your problem</title>
+        <link rel="stylesheet" href="skin/base.css">
+        <script src="subsystems/state/state.js"></script>
+    </head>
+    <body>
+        <a href="#main-content" class="skip-link" style="position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden;">
+            Skip to main content
+        </a>
+        <nav-bar></nav-bar>
+        <main id="main-content" class="hero-section">
+            <header role="banner" style="margin-top: 20px;">
+                <div class="logo-container">
+                    <span style="font-family: 'Courier New', monospace; font-weight: 900; font-size: 1.8rem; color: var(--accent-color); border: 2px solid var(--accent-color); padding: 4px 12px; border-radius: 4px;">
+                        VENT
+                    </span>
+                </div>
+            </header>
 
-        <div class="input-section">
-            <input type="text" placeholder="vent here...">
-            <button type="button">Submit</button>
-        </div>
-    </div>
-    <script src="subsystems/router.js"></script>
-    <script>
-        // Finds the button and tells it to go to the auth page when clicked
-        document.querySelector('button').addEventListener('click', function() {
-            window.location.href = '/skeleton/problem_placeholder.html';
-        });
-    </script>
-    <script>
-        // Phase 2.1: Predictive Hover Logic
-        const submitBtn = document.querySelector('.input-section button');
+            <div style="flex-grow: 1;"></div>
 
-        if (submitBtn) {
-            submitBtn.addEventListener('mouseenter', () => {
-                console.log("%c Predictive Signal: Preparing assets...", "color: #6f42c1;");
+            <section class="input-section glass-card" style="width: 100%; max-width: 900px; padding: 12px 20px 12px 30px; margin-bottom: 40px; display: flex; align-items: flex-end; gap: 20px;">
+                <textarea id="vent-input" autofocus placeholder="Begin typing..." aria-label="Express your thoughts here"
+                        rows="1"
+                        style="flex-grow: 1;
+                        min-height: 24px; 
+                        max-height: 300px;
+                        justify-content: center; 
+                        border: none;
+                        outline: none;
+                        background: transparent;
+                        font-size: 1.4rem;
+                        font-weight: 500;
+                        line-height: 1.4;
+                        color: var(--text-primary); 
+                        resize: none;
+                        overflow-y: hidden;
+                        padding: 5px 0; 
+                        -webkit-font-smoothing: antialiased;
+                        overflow-y: hidden; /* script handles expansion, no scrollbar needed */
+                        scrollbar-width: none; /* firefox hide */
+                        -ms-overflow-style: none; /* IE/Edge hide */
+                        "></textarea>
                 
-                // FIXED: Removed '.user' to match your actual state structure
-                if (window.appState) {
-                    window.appState.visitCount++;
-                }
+                <button id="submit-vent" aria-label="Submit Vent" style="background: none; border: none; padding: 0; cursor: pointer; display: flex; align-items: center; width: 60px; height: 60px; flex-shrink: 0;">
+                    <svg width="41" height="41" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" style="color: var(--accent-color);">
+                        <path d="M21.5711 11.2332L4.82311 3.01217C3.86121 2.54044 2.80237 3.39329 3.09765 4.39892L5.43261 11.2501L14.9998 12.0001L5.43261 12.7501L3.09765 19.6013C2.80237 20.6069 3.86121 21.4598 4.82311 20.988L21.5711 12.767C22.143 12.486 22.143 11.5142 21.5711 11.2332Z" />
+                    </svg>
+                </button>
+            </section>
+
+            <footer role="contentinfo" style="padding-bottom: 20px; opacity: 0.4; font-size: 0.8rem;">
+                <p>A safe space for your thoughts. Built for the Think Tank.</p>
+            </footer>
+        </main>
+        <script>
+            // Finds the button and tells it to go to the auth page when clicked
+            document.querySelector('button').addEventListener('click', function() {
+                window.location.href = '/skeleton/problem_placeholder.html';
             });
-        }
-    </script>
-</body>
+        </script>
+        <script>
+            // Phase 2.1: Predictive Hover Logic
+            const submitBtn = document.querySelector('.input-section button');
+
+            if (submitBtn) {
+                submitBtn.addEventListener('mouseenter', () => {
+                    console.log("%c Predictive Signal: Preparing assets...", "color: #6f42c1;");
+                    
+                    // FIXED: Removed '.user' to match your actual state structure
+                    if (window.appState) {
+                        window.appState.visitCount++;
+                    }
+                });
+            }
+        </script>
+        <script>
+            const tx = document.getElementById('vent-input');
+            
+            function OnInput() {
+                this.style.height = 'auto'; 
+                // We add a tiny offset or check to ensure it doesn't "jump"
+                this.style.height = (this.scrollHeight) + "px";
+            }
+
+            tx.addEventListener("input", OnInput, false);
+
+            // FIX: Run the calculation on page load to center the placeholder
+            window.addEventListener('load', () => {
+                OnInput.call(tx); 
+                tx.focus();
+            });
+        </script>
+        <script>
+            // Force focus on page load to ensure "Always Ready" state
+            window.addEventListener('load', () => {
+                const input = document.querySelector('#vent-input') || document.querySelector('#email');
+                if (input) input.focus();
+            });
+        </script>
+        <script src="subsystems/router.js"></script>
+    </body>
 </html>
