@@ -44,8 +44,23 @@ function updateUI(property, value) {
 function createPersistentState(state) {
     return new Proxy(state, {
         set(target, property, value) {
+            // Update the value in the state object
             target[property] = value;
-            updateUI(property, value);
+
+            // Phase 1.2 Refactor: Multi-Tenant Broadcast
+            // Instead of calling one updateUI function, we loop through all subscribers
+            if (target.subscribers && Array.isArray(target.subscribers)) {
+                console.log(`Phase 1.2: Broadcasting change for [${property}] to ${target.subscribers.length} subscribers.`);
+                target.subscribers.forEach(callback => {
+                    try {
+                        callback(property, value);
+                    } catch (err) {
+                        console.error("Subscriber execution failed:", err);
+                    }
+                });
+            }
+
+            // Keep the global event for legacy support if needed
             window.dispatchEvent(new Event('stateChange'));
             return true;
         }
@@ -74,3 +89,10 @@ if (document.readyState === 'loading') {
     updateUI("theme", window.appState.theme);
     applyTimeTheme();
 }
+
+// Helper to add new subscribers to the registry
+window.subscribeToState = (callback) => {
+    if (typeof callback === 'function') {
+        window.appState.subscribers.push(callback);
+    }
+};
