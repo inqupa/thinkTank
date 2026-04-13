@@ -57,14 +57,16 @@ function createPersistentState(state) {
         set(target, property, value) {
             target[property] = value;
 
-            // Phase 1.2 Multi-Tenant Broadcast
-            // Access subscribers from the top-level appState
+            // Inside the Proxy 'set' trap in state.js
             if (window.appState && window.appState.subscribers) {
-                window.appState.subscribers.forEach(callback => {
-                    try {
-                        callback(property, value);
-                    } catch (err) {
-                        console.error("Subscriber execution failed:", err);
+                window.appState.subscribers.forEach(sub => {
+                    // Only run the callback if the key matches OR if the subscriber wants everything
+                    if (sub.key === property || sub.key === '*') {
+                        try {
+                            sub.callback(property, value);
+                        } catch (err) {
+                            console.error("Subscriber failed:", err);
+                        }
                     }
                 });
             }
@@ -99,9 +101,11 @@ if (document.readyState === 'loading') {
     applyTimeTheme();
 }
 
-// Helper to add new subscribers to the registry
-window.subscribeToState = (callback) => {
+// Phase 1.3: Enhanced Selective Subscription Helper
+window.subscribeToState = (key, callback) => {
     if (typeof callback === 'function') {
-        window.appState.subscribers.push(callback);
+        // Store the callback along with the key it cares about
+        window.appState.subscribers.push({ key, callback });
+        console.log(`Phase 1.3: Registered selective subscriber for [${key}]`);
     }
 };

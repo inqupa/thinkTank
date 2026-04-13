@@ -18,10 +18,12 @@ class NavBar extends HTMLElement {
     }
 
     connectedCallback() {
-        // FIXED: When the component loads on a new page, pull the saved mode
         const savedMode = localStorage.getItem('nav-mode') || 'full';
         this.setAttribute('mode', savedMode);
         this.render();
+
+        // Only re-render when 'ui' (theme/mode) changes
+        window.subscribeToState('ui', () => this.render());
     }
 
     render() {
@@ -85,8 +87,8 @@ class UserCard extends HTMLElement {
     connectedCallback() {
         this.render();
         
-        // Listen for global state changes to update automatically
-        window.addEventListener('stateChange', () => this.render());
+        // Only re-render when 'user' data changes
+        window.subscribeToState('user', () => this.render());
     }
 
     render() {
