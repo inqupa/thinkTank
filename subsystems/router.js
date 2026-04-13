@@ -1,135 +1,76 @@
-// Phase 3.3 Refined: Persistent Attribute Reflection
 class NavBar extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
     }
 
-    static get observedAttributes() {
-        return ['mode'];
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        // Save the choice to localStorage whenever the attribute is set
-        if (name === 'mode') {
-            localStorage.setItem('nav-mode', newValue);
-        }
-        this.render();
-    }
-
     connectedCallback() {
-        const savedMode = localStorage.getItem('nav-mode') || 'full';
-        this.setAttribute('mode', savedMode);
-        this.render();
-
-        // Only re-render when 'ui' (theme/mode) changes
         window.subscribeToState('ui', () => this.render());
+        this.render();
     }
 
     render() {
-        const currentPath = window.location.pathname;
-        const mode = this.getAttribute('mode') || 'full';
-        
+        const template = document.getElementById('nav-bar-template');
+        if (!template) return;
+
+        this.shadowRoot.innerHTML = '';
+        const content = template.content.cloneNode(true);
+        const navLinks = content.querySelector('.nav-links');
+
+        // Logic for links
         const links = [
             { name: "Home", href: "/index.html" },
-            { name: "Vents | Problems", href: "/skeleton/problem_placeholder.html" },
-            { name: "Login", href: "/skeleton/auth_placeholder.html" },
             { name: "Profile", href: "/skeleton/profile_placeholder.html" }
         ];
 
-        const filteredLinks = mode === 'minimal' 
-            ? links.filter(l => l.name === "Home" || l.name === "Profile") 
-            : links;
+        links.forEach(link => {
+            const a = document.createElement('a');
+            a.href = link.href;
+            a.textContent = link.name;
+            navLinks.appendChild(a);
+        });
 
-        this.shadowRoot.innerHTML = `
-            <style>
-                nav {
-                    background: #333;
-                    padding: ${mode === 'minimal' ? '5px' : '10px'};
-                    display: flex;
-                    justify-content: center;
-                }
-                .nav-links a {
-                    color: rgba(255, 255, 255, 0.6);
-                    text-decoration: none;
-                    margin: 0 15px;
-                    font-family: sans-serif;
-                    font-weight: bold;
-                    transition: color 0.3s ease;
-                    font-size: ${mode === 'minimal' ? '0.8rem' : '1rem'};
-                }
-                .nav-links a:hover, .nav-links a.active { color: white; }
-                .nav-links a.active { border-bottom: 2px solid white; }
-            </style>
-            <nav>
-                <div class="nav-links">
-                    ${filteredLinks.map(link => {
-                        const isActive = currentPath.endsWith(link.href) ? 'class="active"' : '';
-                        return `<a href="${link.href}" ${isActive}>${link.name}</a>`;
-                    }).join('')}
-                </div>
-            </nav>
-        `;
+        this.shadowRoot.appendChild(content);
     }
 }
+customElements.define('nav-bar', NavBar);
 
-if (!customElements.get('nav-bar')) {
-    customElements.define('nav-bar', NavBar);
-}
-
-// Phase 3.4: Componentize the Profile Card
 class UserCard extends HTMLElement {
     constructor() {
         super();
         this.attachShadow({ mode: 'open' });
     }
 
+    // Inside class UserCard in subsystems/router.js
     connectedCallback() {
+        // Explicitly listen to the 'user' namespace
+        window.subscribeToState('user', () => {
+            console.log("Phase 2.3: User namespace changed, re-rendering...");
+            this.render();
+        });
         this.render();
-        
-        // Only re-render when 'user' data changes
-        window.subscribeToState('user', () => this.render());
     }
 
     render() {
-        // Fallback data if appState isn't ready
-        const name = window.appState?.name || "User Name";
-        const bio = window.appState?.bio || "Short bio goes here.";
+        const template = document.getElementById('user-card-template');
+        if (!template) return;
 
-        this.shadowRoot.innerHTML = `
-            <style>
-                .header {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    margin-bottom: 20px;
-                }
-                .profile-picture {
-                    width: 150px;
-                    height: 150px;
-                    background-color: #ddd;
-                    border-radius: 50%;
-                    margin-bottom: 20px;
-                }
-                .username { 
-                    margin: 10px 0; 
-                    color: var(--text-color, #333);
-                }
-                .bio { 
-                    color: #666; 
-                    text-align: center; 
-                    margin-bottom: 10px;
-                }
-            </style>
-            <div class="header">
-                <div class="profile-picture"></div>
-                <h1 class="username">${name}</h1>
-                <p class="bio">${bio}</p>
-            </div>
-        `;
+        // Clear Shadow DOM
+        this.shadowRoot.innerHTML = '';
+
+        // Clone Template
+        const content = template.content.cloneNode(true);
+
+        // Map State to Cloned DOM
+        // Use the new namespaced path: appState.user.name
+        const nameData = window.appState?.user?.name || "User Name";
+        const bioData = window.appState?.user?.bio || "Bio...";
+
+        content.querySelector('.username').textContent = nameData;
+        content.querySelector('.bio').textContent = bioData;
+
+        // Final Append
+        this.shadowRoot.appendChild(content);
     }
 }
-
-if (!customElements.get('user-card')) {
-    customElements.define('user-card', UserCard);
-}
+customElements.define('user-card', UserCard);

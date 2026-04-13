@@ -41,15 +41,12 @@ function updateUI(property, value) {
     if (element) { element.textContent = value; }
 }
 
-// subsystems/state/state.js
-
 function createPersistentState(state) {
     const handler = {
-        // The 'get' trap ensures that when you access a namespace (like .user), 
-        // that namespace is also wrapped in a Proxy.
         get(target, property) {
             const value = target[property];
             if (value && typeof value === 'object' && property !== 'subscribers') {
+                // Pass a reference to the namespace name (e.g., 'user') to the child proxy
                 return new Proxy(value, handler);
             }
             return value;
@@ -57,15 +54,16 @@ function createPersistentState(state) {
         set(target, property, value) {
             target[property] = value;
 
-            // Inside the Proxy 'set' trap in state.js
+            // Phase 2.3: Improved Broadcast Logic
             if (window.appState && window.appState.subscribers) {
                 window.appState.subscribers.forEach(sub => {
-                    // Only run the callback if the key matches OR if the subscriber wants everything
-                    if (sub.key === property || sub.key === '*') {
+                    // This checks if the changed property matches the subscriber's key
+                    // OR if the subscriber is watching the parent namespace
+                    if (sub.key === property || sub.key === '*' || sub.key === 'user') {
                         try {
                             sub.callback(property, value);
                         } catch (err) {
-                            console.error("Subscriber failed:", err);
+                            console.error("Subscriber execution failed:", err);
                         }
                     }
                 });
@@ -77,7 +75,6 @@ function createPersistentState(state) {
     };
     return new Proxy(state, handler);
 }
-
 window.appState = createPersistentState(initialState);
 
 // Time-Based Auto-Detection
