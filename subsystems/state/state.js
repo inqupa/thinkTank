@@ -106,3 +106,11 @@ window.subscribeToState = (key, callback) => {
         console.log(`Phase 1.3: Registered selective subscriber for [${key}]`);
     }
 };
+
+window.onload = () => {
+    if (window.initDB) {
+        window.initDB().then(() => {
+            console.log("System Ready: State and Database connected.");
+        });
+    }
+};
