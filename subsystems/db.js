@@ -1,4 +1,4 @@
-// Phase 3.1: Initialize IndexedDB for Scalable Storage
+// Phase 3.1 & 3.2: IndexedDB Initialization and Data Access Object (DAO)
 const DB_NAME = 'VentDataStore';
 const DB_VERSION = 1;
 
@@ -8,25 +8,46 @@ window.initDB = () => {
 
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
-            // Create a store for 'vents' (problems/posts)
             if (!db.objectStoreNames.contains('vents')) {
                 db.createObjectStore('vents', { keyPath: 'id', autoIncrement: true });
             }
-            // Create a store for 'userSettings'
             if (!db.objectStoreNames.contains('settings')) {
                 db.createObjectStore('settings', { keyPath: 'key' });
             }
-            console.log("Phase 3.1: Database Stores Created");
         };
 
-        request.onsuccess = (event) => {
-            console.log("Phase 3.1: IndexedDB Initialized Successfully");
-            resolve(event.target.result);
-        };
+        request.onsuccess = (event) => resolve(event.target.result);
+        request.onerror = (event) => reject(event.target.error);
+    });
+};
 
-        request.onerror = (event) => {
-            console.error("Phase 3.1: Database Error", event.target.error);
-            reject(event.target.error);
+// Phase 3.2: Data Access Object (DAO) Methods
+
+// Save a new vent (problem) to the database
+window.saveVent = async (ventData) => {
+    const db = await window.initDB();
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction(['vents'], 'readwrite');
+        const store = transaction.objectStore('vents');
+        const request = store.add(ventData);
+
+        request.onsuccess = () => {
+            console.log("Phase 3.2: Vent saved to IndexedDB");
+            resolve(request.result);
         };
+        request.onerror = () => reject(request.error);
+    });
+};
+
+// Retrieve all vents from the database
+window.getAllVents = async () => {
+    const db = await window.initDB();
+    return new Promise((resolve, reject) => {
+        const transaction = db.transaction(['vents'], 'readonly');
+        const store = transaction.objectStore('vents');
+        const request = store.getAll();
+
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
     });
 };
