@@ -13,13 +13,17 @@ class NavBar extends HTMLElement {
         const template = document.getElementById('nav-bar-template');
         if (!template) return;
 
-        this.shadowRoot.innerHTML = '';
+        // Phase 2.3: Create a Virtual Fragment (in-memory container)
+        const fragment = document.createDocumentFragment();
+        
+        // Clone the template into the fragment
         const content = template.content.cloneNode(true);
         const navLinks = content.querySelector('.nav-links');
 
-        // Logic for links
         const links = [
             { name: "Home", href: "/index.html" },
+            { name: "Vents | Problems", href: "/skeleton/problem_placeholder.html" },
+            { name: "Login", href: "/skeleton/auth_placeholder.html" },
             { name: "Profile", href: "/skeleton/profile_placeholder.html" }
         ];
 
@@ -27,13 +31,18 @@ class NavBar extends HTMLElement {
             const a = document.createElement('a');
             a.href = link.href;
             a.textContent = link.name;
+            if (window.location.pathname.endsWith(link.href)) a.classList.add('active');
             navLinks.appendChild(a);
         });
 
-        this.shadowRoot.appendChild(content);
+        // Add everything to the fragment first
+        fragment.appendChild(content);
+
+        // Final step: Clear the live DOM once and swap in the fragment
+        this.shadowRoot.innerHTML = '';
+        this.shadowRoot.appendChild(fragment);
     }
 }
-customElements.define('nav-bar', NavBar);
 
 class UserCard extends HTMLElement {
     constructor() {
@@ -41,13 +50,8 @@ class UserCard extends HTMLElement {
         this.attachShadow({ mode: 'open' });
     }
 
-    // Inside class UserCard in subsystems/router.js
     connectedCallback() {
-        // Explicitly listen to the 'user' namespace
-        window.subscribeToState('user', () => {
-            console.log("Phase 2.3: User namespace changed, re-rendering...");
-            this.render();
-        });
+        window.subscribeToState('user', () => this.render());
         this.render();
     }
 
@@ -55,22 +59,23 @@ class UserCard extends HTMLElement {
         const template = document.getElementById('user-card-template');
         if (!template) return;
 
-        // Clear Shadow DOM
-        this.shadowRoot.innerHTML = '';
-
-        // Clone Template
+        // Phase 2.3: Create a Virtual Fragment
+        const fragment = document.createDocumentFragment();
         const content = template.content.cloneNode(true);
 
-        // Map State to Cloned DOM
-        // Use the new namespaced path: appState.user.name
         const nameData = window.appState?.user?.name || "User Name";
         const bioData = window.appState?.user?.bio || "Bio...";
 
         content.querySelector('.username').textContent = nameData;
         content.querySelector('.bio').textContent = bioData;
 
-        // Final Append
-        this.shadowRoot.appendChild(content);
+        fragment.appendChild(content);
+
+        // Clear live DOM and swap
+        this.shadowRoot.innerHTML = '';
+        this.shadowRoot.appendChild(fragment);
     }
 }
-customElements.define('user-card', UserCard);
+
+if (!customElements.get('nav-bar')) customElements.define('nav-bar', NavBar);
+if (!customElements.get('user-card')) customElements.define('user-card', UserCard);
