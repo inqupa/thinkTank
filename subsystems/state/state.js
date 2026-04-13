@@ -41,17 +41,26 @@ function updateUI(property, value) {
     if (element) { element.textContent = value; }
 }
 
+// subsystems/state/state.js
+
 function createPersistentState(state) {
-    return new Proxy(state, {
+    const handler = {
+        // The 'get' trap ensures that when you access a namespace (like .user), 
+        // that namespace is also wrapped in a Proxy.
+        get(target, property) {
+            const value = target[property];
+            if (value && typeof value === 'object' && property !== 'subscribers') {
+                return new Proxy(value, handler);
+            }
+            return value;
+        },
         set(target, property, value) {
-            // Update the value in the state object
             target[property] = value;
 
-            // Phase 1.2 Refactor: Multi-Tenant Broadcast
-            // Instead of calling one updateUI function, we loop through all subscribers
-            if (target.subscribers && Array.isArray(target.subscribers)) {
-                console.log(`Phase 1.2: Broadcasting change for [${property}] to ${target.subscribers.length} subscribers.`);
-                target.subscribers.forEach(callback => {
+            // Phase 1.2 Multi-Tenant Broadcast
+            // Access subscribers from the top-level appState
+            if (window.appState && window.appState.subscribers) {
+                window.appState.subscribers.forEach(callback => {
                     try {
                         callback(property, value);
                     } catch (err) {
@@ -60,11 +69,11 @@ function createPersistentState(state) {
                 });
             }
 
-            // Keep the global event for legacy support if needed
             window.dispatchEvent(new Event('stateChange'));
             return true;
         }
-    });
+    };
+    return new Proxy(state, handler);
 }
 
 window.appState = createPersistentState(initialState);
