@@ -8,9 +8,10 @@
         <link rel="stylesheet" href="../skin/base.css">
         <link rel="stylesheet" href="../skin/problem_style_placeholder.css">
         <script>
-            // Inline script executes faster than any external file
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            document.documentElement.setAttribute('data-theme', savedTheme);
+            (function() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+            })();
         </script>
         <script src="../subsystems/bootloader/bootloader.js" defer></script>
     </head>

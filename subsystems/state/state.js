@@ -96,26 +96,10 @@ window.subscribeToState = (key, callback) => {
 };
 
 window.appState = createPersistentState(initialState);
-// NEW: Robust Initialization Function
-function initTheme() {
-    // 1. Register subscriber for future changes
-    window.subscribeToState('theme', (prop, val) => {
-        updateUI(prop, val);
-    });
 
-    // 2. Apply initial theme from state or storage
-    const savedTheme = window.appState.ui.theme || localStorage.getItem('theme') || 'light';
-    updateUI('theme', savedTheme);
-    
-    console.log(`Theme Initialization: Applied [${savedTheme}]`);
-}
-
-// FIX: Run immediately if bootloader injected this after DOMContentLoaded
-if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initTheme);
-} else {
-    initTheme();
-}
+window.subscribeToState('theme', (prop, val) => {
+    updateUI(prop, val); // needed to change theme when user clicks a button
+});
 
 // Keep your time-based auto-detection
 applyTimeTheme();
