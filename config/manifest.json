@@ -1,0 +1,34 @@
+{
+  "system": {
+    "core_styles": [
+        "skin/theme.css",
+        "skin/base.css"
+    ],
+    "core_logic": [
+        "subsystems/state/state.js",
+        "subsystems/db.js"
+    ]
+  },
+  "mapping": {
+    "index.html": {
+        "logic": ["subsystems/logic/nav-bar.js"]
+    },
+    "auth_placeholder.html": {
+        "skin": ["skin/auth_style_placeholder.css"],
+        "logic": ["subsystems/logic/nav-bar.js"]
+    },
+    "profile_placeholder.html": {
+        "skin": ["skin/profile_style_placeholder.css"],
+        "logic": [
+            "subsystems/logic/nav-bar.js",
+            "subsystems/logic/user-card.js"
+        ]
+    },
+    "problem_placeholder.html": {
+        "skin": ["skin/problem_style_placeholder.css"],
+        "logic": [
+            "subsystems/logic/nav-bar.js"
+        ]
+    }
+  }
+}

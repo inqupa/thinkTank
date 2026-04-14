@@ -9,7 +9,10 @@
     --spacing-unit: 8px;
     --success-color: #a3b18a;
     --nav-bg: #121212; /* Centralized from nav-bar logic */
-    --nav-link-color: rgba(255, 255, 255, 0.9);
+    --nav-link-color: rgba(255, 255, 255, 0.8);
+    --profile-container-bg: #121212;
+    --user-card-text: rgba(255, 255, 255, 0.8);
+    --profile-detail-text: rgba(255, 255, 255, 0.8);
 }
 
 [data-theme="dark"] {
@@ -19,4 +22,7 @@
     --text-primary: #e2e3da;
     --accent-color: #d1e2cc;
     --nav-bg: #333333;
+    --profile-container-bg: #333333;
+    --user-card-text: rgba(255, 255, 255, 0.8);
+    --profile-detail-text: rgba(255, 255, 255, 0.8);
 }

@@ -14,7 +14,7 @@ class UserCard extends HTMLElement {
         const fragment = document.createDocumentFragment();
         const content = template.content.cloneNode(true);
 
-        const nameData = window.appState?.user?.name || "User Name";
+        const nameData = window.appState?.user?.name || "username";
         const bioData = window.appState?.user?.bio || "Bio...";
 
         content.querySelector('.username').textContent = nameData;

@@ -4,10 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>vent | your problem</title>
-        <link rel="stylesheet" href="skin/theme.css"> 
-        <link rel="stylesheet" href="skin/base.css">
-        <script src="subsystems/state/state.js"></script>
-        <script src="subsystems/db.js"></script>
+        <script src="/subsystems/bootloader/bootloader.js" defer></script>
     </head>
     <body>
         <a href="#main-content" class="skip-link" style="position: absolute; left: -10000px; top: auto; width: 1px; height: 1px; overflow: hidden;">
@@ -85,19 +82,6 @@
             <nav>
                 <div class="nav-links"></div>
             </nav>
-        </template>
-
-        <template id="user-card-template">
-            <style>
-                .header { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
-                .profile-picture { width: 150px; height: 150px; background-color: var(--card-bg); border-radius: 50%; margin-bottom: 20px; }
-                .username { margin: 10px 0; color: var(--text-primary); }
-            </style>
-            <div class="header">
-                <div class="profile-picture"></div>
-                <h1 class="username"></h1>
-                <p class="bio"></p>
-            </div>
         </template>
         
         <script>
@@ -178,9 +162,5 @@
             // This ensures everything starts only after the page is fully loaded
             window.addEventListener('load', startApp);
         </script>
-
-        <script src="../subsystems/logic/nav-bar.js"></script>
-
-        <script src="../subsystems/logic/user-card.js"></script>
     </body>
 </html>

@@ -7,13 +7,13 @@ body, html {
 
 /* Phase 2.2 Fix: Adaptive Profile Card */
 .profile-container {
-    background-color: var(--bg-color); /* Was white (#fff) */
+    background-color: var(--profile-container-bg); /* Was white (#fff) */
     color: var(--text-color);           /* Adapts text to theme */
     max-width: 600px;
     margin: 50px auto;
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     border: 1px solid rgba(128, 128, 128, 0.2); /* Subtle border for dark mode */
 }
 
@@ -30,7 +30,6 @@ body, html {
 }
 
 .bio {
-    color: #666;
     margin-bottom: 30px;
     text-align: center;
 }
@@ -48,11 +47,11 @@ body, html {
     margin-bottom: 15px;
     padding-bottom: 10px;
     border-bottom: 1px solid rgba(128, 128, 128, 0.1);
-    color: var(--text-color); /* Ensures text is readable */
+    color: var(--profile-detail-text); /* Ensures text is readable */
 }
 
 .detail-item strong {
-    color: var(--text-color);
+    color: var(--profile-detail-text);
     opacity: 0.8; /* Slightly faded for labels */
 }
 
