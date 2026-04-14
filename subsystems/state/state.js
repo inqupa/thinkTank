@@ -95,22 +95,27 @@ window.subscribeToState = (key, callback) => {
     }
 };
 
-
 window.appState = createPersistentState(initialState);
-// Ensures the DOM is fully loaded before trying to update the body attribute
-document.addEventListener('DOMContentLoaded', () => {
-    // 1. Register the subscriber first so it's ready for future changes
+// NEW: Robust Initialization Function
+function initTheme() {
+    // 1. Register subscriber for future changes
     window.subscribeToState('theme', (prop, val) => {
         updateUI(prop, val);
     });
 
-    // 2. Force the initial UI sync using the value directly from state
-    // We check both appState.ui.theme and raw localStorage as a fallback
+    // 2. Apply initial theme from state or storage
     const savedTheme = window.appState.ui.theme || localStorage.getItem('theme') || 'light';
     updateUI('theme', savedTheme);
     
     console.log(`Theme Initialization: Applied [${savedTheme}]`);
-});
+}
+
+// FIX: Run immediately if bootloader injected this after DOMContentLoaded
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initTheme);
+} else {
+    initTheme();
+}
 
 // Keep your time-based auto-detection
 applyTimeTheme();

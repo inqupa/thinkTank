@@ -115,3 +115,10 @@ button:active {
     filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.15));
     transform: rotate(-10deg) scale(1.1);
 }
+
+/* base.css */
+nav-bar {
+    display: block;
+    min-height: 40px; /* Reserves the space so the page doesn't jump */
+    background: var(--nav-bg);
+}

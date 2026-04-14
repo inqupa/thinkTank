@@ -1,12 +1,14 @@
 const CACHE_NAME = 'vent-cache-v1';
 const ASSETS_TO_CACHE = [
     '/',
+    '/config/manifest.json',
     '/index.html',
     '/skin/theme.css',
     '/skin/base.css',
     '/skin/auth_style_placeholder.css',
     '/skin/problem_style_placeholder.css',
     '/skin/profile_style_placeholder.css',
+    '/subsystems/bootloader/bootloader.js',
     '/subsystems/logic/nav-bar.js',
     '/subsystems/logic/user-card.js',
     '/subsystems/state/state.js',
