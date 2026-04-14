@@ -2,6 +2,7 @@ const CACHE_NAME = 'vent-cache-v1';
 const ASSETS_TO_CACHE = [
     '/',
     '/index.html',
+    '/skin/theme.css',
     '/skin/base.css',
     '/skin/auth_style_placeholder.css',
     '/skin/problem_style_placeholder.css',

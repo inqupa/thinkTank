@@ -4,6 +4,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>vent | your problem</title>
+        <link rel="stylesheet" href="skin/theme.css"> 
         <link rel="stylesheet" href="skin/base.css">
         <script src="subsystems/state/state.js"></script>
         <script src="subsystems/db.js"></script>
@@ -77,8 +78,8 @@
 
         <template id="nav-bar-template">
             <style>
-                nav { background: #333; padding: 10px; display: flex; justify-content: center; }
-                .nav-links a { color: rgba(255, 255, 255, 0.6); text-decoration: none; margin: 0 15px; font-family: sans-serif; font-weight: bold; }
+                nav { background: var(--nav-bg); padding: 10px; display: flex; justify-content: center; }
+                .nav-links a { color: var(--nav-link-color); text-decoration: none; margin: 0 15px; font-family: sans-serif; font-weight: bold; }
                 .nav-links a:hover, .nav-links a.active { color: white; }
             </style>
             <nav>
@@ -89,8 +90,8 @@
         <template id="user-card-template">
             <style>
                 .header { display: flex; flex-direction: column; align-items: center; margin-bottom: 20px; }
-                .profile-picture { width: 150px; height: 150px; background-color: #ddd; border-radius: 50%; margin-bottom: 20px; }
-                .username { margin: 10px 0; color: var(--text-color, #333); }
+                .profile-picture { width: 150px; height: 150px; background-color: var(--card-bg); border-radius: 50%; margin-bottom: 20px; }
+                .username { margin: 10px 0; color: var(--text-primary); }
             </style>
             <div class="header">
                 <div class="profile-picture"></div>

@@ -1,0 +1,22 @@
+/* skin/theme.css */
+:root {
+    /* Design Tokens - Light Mode */
+    --bg-color: #f0ebe3;
+    --card-bg: #ffffff;
+    --text-primary: #3c3c3c;
+    --accent-color: #7d8471;
+    --focus-ring: #005fcc;
+    --spacing-unit: 8px;
+    --success-color: #a3b18a;
+    --nav-bg: #333333; /* Centralized from nav-bar logic */
+    --nav-link-color: rgba(255, 255, 255, 0.6);
+}
+
+[data-theme="dark"] {
+    /* Design Tokens - Dark Mode */
+    --bg-color: #1a1c18;
+    --card-bg: #23261f;
+    --text-primary: #e2e3da;
+    --accent-color: #d1e2cc;
+    --nav-bg: #121212;
+}

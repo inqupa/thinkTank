@@ -1,23 +1,4 @@
 /* Phase 4.1: CSS Variables & Calm Theming */
-:root {
-    /* Cloud Dancer Palette (Light Mode) */
-    --bg-color: #f0ebe3;        /* Muted off-white */
-    --card-bg: #ffffff;
-    --text-primary: #3c3c3c;
-    --accent-color: #7d8471;    /* Sage green */
-    --focus-ring: #005fcc;
-    --spacing-unit: 8px;
-    --success-color: #a3b18a; /* Soft olive green */
-}
-
-[data-theme="dark"] {
-    /* Nature Distilled (Dark Mode) */
-    --bg-color: #1a1c18;
-    --card-bg: #23261f;
-    --text-primary: #e2e3da;
-    --accent-color: #d1e2cc;
-}
-
 body {
     background-color: var(--bg-color);
     color: var(--text-primary);
