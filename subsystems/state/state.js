@@ -25,11 +25,11 @@ window.appState = createPersistentState(initialState);
 
 function updateUI(prop, val) {
     if (prop === 'theme') {
+        // Ensure document.documentElement is used for global data-theme attribute
         if (val === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
             localStorage.setItem('theme', 'dark');
         } else {
-            // This is the missing piece:
             document.documentElement.removeAttribute('data-theme');
             localStorage.setItem('theme', 'light');
         }
@@ -97,13 +97,20 @@ window.subscribeToState = (key, callback) => {
 };
 
 async function startStateSystem() {
-    // 3. Load defaults asynchronously
+    // Load defaults asynchronously
     await loadInitialState(); 
 
-    // 4. Register core subscribers
+    // Register core theme subscribers
     window.subscribeToState('theme', (prop, val) => {
         updateUI(prop, val);
     });
+
+    // PERSISTENCE FIX: Apply the current theme immediately
+    // Access the live value from your namespaced state
+    const currentTheme = window.appState.ui.theme || localStorage.getItem('theme');
+    if (currentTheme) {
+        updateUI('theme', currentTheme);
+    }
 
     // 5. Run auto-detection
     applyTimeTheme();
