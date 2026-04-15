@@ -1,3 +1,28 @@
+async function loadInitialState() {
+    const saved = localStorage.getItem('app_state_exists');
+    if (!saved) {
+        try {
+            const response = await fetch('/data/default_state.json');
+            const defaults = await response.json();
+            // Deep merge defaults into initialState
+            Object.assign(initialState.user, defaults.user);
+            Object.assign(initialState.ui, defaults.ui);
+            Object.assign(initialState.data, defaults.data);
+            localStorage.setItem('app_state_exists', 'true');
+        } catch (e) {
+            console.error("Failed to load state snapshot:", e);
+        }
+    }
+}
+
+// 1. Define initialState with the subscribers array immediately
+let initialState = {
+    user: {}, ui: {}, data: {}, subscribers: [] 
+};
+
+// 2. Create the Proxy immediately so window.appState is never undefined
+window.appState = createPersistentState(initialState);
+
 function updateUI(property, value) {
     if (property === "theme") {
         if (document.body) {
@@ -74,17 +99,6 @@ window.subscribeToState = (key, callback) => {
     }
 };
 
-window.subscribeToState('theme', (prop, val) => {
-    updateUI(prop, val); // needed to change theme when user clicks a button
-});
-
-// 1. Define initialState with the subscribers array immediately
-let initialState = {
-    user: {}, ui: {}, data: {}, subscribers: [] 
-};
-
-// 2. Create the Proxy immediately so window.appState is never undefined
-window.appState = createPersistentState(initialState);
 async function startStateSystem() {
     // 3. Load defaults asynchronously
     await loadInitialState(); 
