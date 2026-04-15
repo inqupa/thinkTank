@@ -23,26 +23,23 @@ let initialState = {
 // 2. Create the Proxy immediately so window.appState is never undefined
 window.appState = createPersistentState(initialState);
 
-function updateUI(property, value) {
-    if (property === "theme") {
-        if (document.body) {
-            document.body.setAttribute('data-theme', value);
-            localStorage.setItem('theme', value);
+function updateUI(prop, val) {
+    if (prop === 'theme') {
+        if (val === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+        } else {
+            // This is the missing piece:
+            document.documentElement.removeAttribute('data-theme');
+            localStorage.setItem('theme', 'light');
         }
-        return;
-    }
-    
-    if (property === "visitCount") {
-        localStorage.setItem('visitCount', value);
-        return;
     }
 
-    if (property === "dismissedSuggestion") {
-        localStorage.setItem('dismissedSuggestion', value);
-    }
-
-    const element = document.getElementById(`sig-${property}`);
-    if (element) { element.textContent = value; }
+    // Existing logic for other signals...
+    const elements = document.querySelectorAll(`[id^="sig-${prop}"]`);
+    elements.forEach(el => {
+        el.textContent = val;
+    });
 }
 
 function createPersistentState(state) {
