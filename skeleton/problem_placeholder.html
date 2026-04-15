@@ -34,19 +34,30 @@
         </template>
 
         <script>
+            // skeleton/problem_placeholder.html - Update the script at the bottom
             document.addEventListener('DOMContentLoaded', () => {
                 if (!window.appState) return;
 
-                // TRIGGER 2: Increment count simply for visiting this page
-                window.appState.data.visitCount++;
+                // Helper function to show/hide the suggestion box
+                const checkSuggestionStatus = () => {
+                    const count = window.appState.data.visitCount;
+                    const dismissed = window.appState.ui.dismissedSuggestion;
+                    
+                    if (count > 3 && !dismissed) {
+                        const box = document.getElementById('suggestion-box');
+                        if (box) box.style.display = 'block';
+                    }
+                };
 
-                // Show box if count > 3 AND user hasn't dismissed it
-                if (window.appState.data.visitCount > 3 && !window.appState.ui.dismissedSuggestion) {
-                    const box = document.getElementById('suggestion-box');
-                    if (box) box.style.display = 'block';
-                }
+                // 1. Initial check on page load
+                window.appState.data.visitCount++; 
+                checkSuggestionStatus();
 
-                // Handle the "Not Now" choice
+                // 2. PERSISTENCE FIX: Subscribe to state changes so the UI is "Adaptive"
+                window.subscribeToState('data', checkSuggestionStatus);
+                window.subscribeToState('ui', checkSuggestionStatus);
+
+                // Handle dismissal
                 document.getElementById('dismiss-suggestion').addEventListener('click', () => {
                     window.appState.ui.dismissedSuggestion = true;
                     document.getElementById('suggestion-box').style.display = 'none';

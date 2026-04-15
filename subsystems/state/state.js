@@ -60,7 +60,7 @@ function createPersistentState(state) {
                 window.appState.subscribers.forEach(sub => {
                     // This checks if the changed property matches the subscriber's key
                     // OR if the subscriber is watching the parent namespace
-                    if (sub.key === property || sub.key === '*' || sub.key === 'user' || property === 'theme') {
+                    if (sub.key === property || sub.key === '*' || sub.key === 'user' || sub.key === 'data' || sub.key === 'ui' || property === 'theme') {
                         try {
                             sub.callback(property, value);
                         } catch (err) {
