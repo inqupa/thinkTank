@@ -17,7 +17,10 @@ async function loadInitialState() {
 
 // 1. Define initialState with the subscribers array immediately
 let initialState = {
-    user: {}, ui: {}, data: {}, subscribers: [] 
+    user: { name: "", bio: "", email: "" },
+    ui: { theme: "light", dismissedSuggestion: false },
+    data: { visitCount: 0 }, // visitCount now starts at 0, not undefined
+    subscribers: [] 
 };
 
 // 2. Create the Proxy immediately so window.appState is never undefined

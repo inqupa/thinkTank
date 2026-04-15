@@ -34,14 +34,15 @@
         </template>
 
         <script>
-            // skeleton/problem_placeholder.html - Update the script at the bottom
             document.addEventListener('DOMContentLoaded', () => {
                 if (!window.appState) return;
 
-                // Helper function to show/hide the suggestion box
+                // Function to evaluate if the suggestion box should be shown
                 const checkSuggestionStatus = () => {
                     const count = window.appState.data.visitCount;
                     const dismissed = window.appState.ui.dismissedSuggestion;
+                    
+                    console.log(`Checking Suggestion: Count is ${count}, Dismissed is ${dismissed}`);
                     
                     if (count > 3 && !dismissed) {
                         const box = document.getElementById('suggestion-box');
@@ -49,15 +50,18 @@
                     }
                 };
 
-                // 1. Initial check on page load
-                window.appState.data.visitCount++; 
-                checkSuggestionStatus();
-
-                // 2. PERSISTENCE FIX: Subscribe to state changes so the UI is "Adaptive"
+                // 1. Subscribe to changes in 'data' and 'ui' so the box appears/disappears reactively
                 window.subscribeToState('data', checkSuggestionStatus);
                 window.subscribeToState('ui', checkSuggestionStatus);
 
-                // Handle dismissal
+                // 2. Increment the visit count for the current visit
+                // Because of the fix in state.js, this will no longer result in NaN
+                window.appState.data.visitCount++;
+
+                // 3. Initial check for the current page load
+                checkSuggestionStatus();
+
+                // Handle the "Not Now" choice
                 document.getElementById('dismiss-suggestion').addEventListener('click', () => {
                     window.appState.ui.dismissedSuggestion = true;
                     document.getElementById('suggestion-box').style.display = 'none';
