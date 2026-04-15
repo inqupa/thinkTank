@@ -17,6 +17,28 @@ const ASSETS_TO_CACHE = [
     '/skeleton/problem_placeholder.html',
     '/skeleton/profile_placeholder.html'
 ];
+const VERSION_CHECK_URL = '/config/version.json';
+
+self.addEventListener('message', (event) => {
+    if (event.data.action === 'skipWaiting') self.skipWaiting();
+});
+
+// Logic to periodically check for version updates
+async function checkForUpdates() {
+    try {
+        const response = await fetch(VERSION_CHECK_URL);
+        const data = await response.json();
+        const currentVersion = await caches.match('version');
+        
+        if (currentVersion && (await currentVersion.json()).version !== data.version) {
+            console.log("Phase 4.3: New Version Detected. Purging Cache...");
+            await caches.delete(CACHE_NAME);
+            // Trigger a re-install of the new version
+        }
+    } catch (e) {
+        console.warn("Version check skipped (offline).");
+    }
+}
 
 // Phase 3.4: Install event - Save files to the device disk
 self.addEventListener('install', (event) => {

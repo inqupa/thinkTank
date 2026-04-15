@@ -1,23 +1,30 @@
-// Phase 1.1 Refactor: Implement State Namespacing
-const initialState = {
-    // userState namespace
-    user: {
-        name: "User Name",
-        bio: "Short bio goes here.",
-        email: "user@example.com"
-    },
-    // uiState namespace
-    ui: {
-        theme: localStorage.getItem('theme') || "light",
-        dismissedSuggestion: localStorage.getItem('dismissedSuggestion') === 'true'
-    },
-    // dataState namespace
-    data: {
-        visitCount: parseInt(localStorage.getItem('visitCount')) || 0
-    },
-    // Phase 1.1: Create a Subscriber Registry
-    subscribers: [] 
+// Replace the hard-coded initialState declaration
+let initialState = {
+    user: {}, ui: {}, data: {}, subscribers: []
 };
+
+async function loadInitialState() {
+    const saved = localStorage.getItem('app_state_exists');
+    if (!saved) {
+        try {
+            const response = await fetch('/data/default_state.json');
+            const defaults = await response.json();
+            // Deep merge defaults into initialState
+            Object.assign(initialState.user, defaults.user);
+            Object.assign(initialState.ui, defaults.ui);
+            Object.assign(initialState.data, defaults.data);
+            localStorage.setItem('app_state_exists', 'true');
+        } catch (e) {
+            console.error("Failed to load state snapshot:", e);
+        }
+    }
+}
+
+// Ensure window.appState is created only after fetching defaults
+loadInitialState().then(() => {
+    window.appState = createPersistentState(initialState);
+    applyTimeTheme();
+});
 
 function updateUI(property, value) {
     if (property === "theme") {
