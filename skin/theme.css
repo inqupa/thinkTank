@@ -1,4 +1,3 @@
-/* skin/theme.css */
 :root {
     /* Design Tokens - Light Mode */
     --bg-color: #f0ebe3;
@@ -8,11 +7,11 @@
     --focus-ring: #005fcc;
     --spacing-unit: 8px;
     --success-color: #a3b18a;
-    --nav-bg: #121212; /* Centralized from nav-bar logic */
+    --nav-bg: #121212;
     --nav-link-color: rgba(255, 255, 255, 0.8);
-    --profile-container-bg: #121212;
-    --user-card-text: rgba(255, 255, 255, 0.8);
-    --profile-detail-text: rgba(255, 255, 255, 0.8);
+    --profile-container-bg: #ffffff;
+    --user-card-text: var(--text-primary);
+    --profile-detail-text: var(--text-primary);
 }
 
 [data-theme="dark"] {
