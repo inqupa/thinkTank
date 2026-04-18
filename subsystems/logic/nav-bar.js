@@ -4,17 +4,12 @@ class NavBar extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
     }
+
     connectedCallback() {
-        window.subscribeToState('ui', () => this.render());
         this.render();
     }
-    render() {
-        const template = document.getElementById('nav-bar-template');
-        if (!template) return;
-        const fragment = document.createDocumentFragment();
-        const content = template.content.cloneNode(true);
-        const navLinks = content.querySelector('.nav-links');
 
+    render() {
         const links = [
             { name: "Home", href: "/index.html" },
             { name: "Vents | Problems", href: "/skeleton/problem_placeholder.html" },
@@ -22,22 +17,32 @@ class NavBar extends HTMLElement {
             { name: "Profile", href: "/skeleton/profile_placeholder.html" }
         ];
 
+        const style = `
+            nav { background: var(--nav-bg); padding: 10px; display: flex; justify-content: center; }
+            .nav-links a { color: var(--nav-link-color); text-decoration: none; margin: 0 15px; font-family: sans-serif; font-weight: bold; }
+            .nav-links a:hover, .nav-links a.active { color: #3DB5FF; }
+        `;
+
+        const nav = document.createElement('nav');
+        const navLinks = document.createElement('div');
+        navLinks.className = 'nav-links';
+
         links.forEach(link => {
             const a = document.createElement('a');
             a.href = link.href;
             a.textContent = link.name;
-            // FIX: Add 'active' class if the current path matches the link
-            // We use .includes() or .endsWith() to handle path variations
+            
             if (window.location.pathname.endsWith(link.href) || 
-            (window.location.pathname === '/' && link.href === '/index.html')) {
+               (window.location.pathname === '/' && link.href === '/index.html')) {
                 a.classList.add('active');
             }
             navLinks.appendChild(a);
         });
 
-        fragment.appendChild(content);
-        this.shadowRoot.innerHTML = '';
-        this.shadowRoot.appendChild(fragment);
+        nav.appendChild(navLinks);
+
+        this.shadowRoot.innerHTML = `<style>${style}</style>`;
+        this.shadowRoot.appendChild(nav);
     }
 }
 customElements.define('nav-bar', NavBar);
