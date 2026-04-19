@@ -63,3 +63,21 @@ window.getAllVents = async () => {
         request.onerror = () => reject(request.error);
     });
 };
+
+window.getVents = async function() {
+    try {
+        const response = await fetch('/api/vents', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Server returned ${response.status}`);
+        }
+
+        return await response.json();
+    } catch (err) {
+        console.error("Failed to fetch vents:", err);
+        return []; // Return empty array to prevent frontend crashes
+    }
+};

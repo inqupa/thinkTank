@@ -119,6 +119,22 @@ export default {
         }
     }
 
+    // Handle Fetching All Vents
+    if (request.method === "GET" && url.pathname === "/api/vents") {
+        try {
+            const { results } = await env.vent_black.prepare(
+                "SELECT id, content, vent_month_year, created_at, is_test FROM vents ORDER BY created_at DESC"
+            ).all();
+            
+            return new Response(JSON.stringify(results), {
+                status: 200,
+                headers: { ...corsHeaders, "Content-Type": "application/json" }
+            });
+        } catch (error) {
+            return new Response(JSON.stringify({ error: "Server Error" }), { status: 500, headers: corsHeaders });
+        }
+    }
+
     // Handle Magic Link Generation (Login & Register)
     if (request.method === 'POST' && url.pathname === '/api/auth/magic-link') {
       try {
