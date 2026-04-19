@@ -14,6 +14,9 @@ export default {
       "Access-Control-Allow-Origin": isAllowedOrigin,
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
+      // Defense in Depth: Content Security Policy
+      // Only allows scripts from your own origin. Blocks inline scripts and evals.
+      "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
     };
 
     if (request.method === "OPTIONS") {
