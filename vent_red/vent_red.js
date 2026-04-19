@@ -14,6 +14,9 @@ export default {
       "Access-Control-Allow-Origin": isAllowedOrigin,
       "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
+      // Defense in Depth: Content Security Policy
+      // Only allows scripts from your own origin. Blocks inline scripts and evals.
+      "Content-Security-Policy": "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
     };
 
     if (request.method === "OPTIONS") {
@@ -136,6 +139,15 @@ export default {
         } catch (error) {
             return new Response(JSON.stringify({ error: "Server Error" }), { status: 500, headers: corsHeaders });
         }
+    }
+
+    // Defense in Depth: Handle CSRF Token Generation
+    if (request.method === "GET" && url.pathname === "/api/csrf-token") {
+        const token = crypto.randomUUID();
+        const responseHeaders = new Headers(corsHeaders);
+        // Notice we do NOT use HttpOnly here, because our frontend JS needs to read it
+        responseHeaders.set("Set-Cookie", `csrf_token=${token}; Path=/; SameSite=Strict; Max-Age=86400`);
+        return new Response(JSON.stringify({ csrfToken: token }), { status: 200, headers: responseHeaders });
     }
 
     // Handle Fetching All Vents
@@ -313,12 +325,22 @@ export default {
         }
     }
 
-    // Handle Deleting a Vent (Strict Ownership Verification)
+    // Handle Deleting a Vent (Strict Ownership and CSRF Verification)
     if (request.method === "DELETE" && url.pathname.startsWith("/api/vent/")) {
         const cookieHeader = request.headers.get('Cookie');
         if (!cookieHeader || !cookieHeader.includes('vent_session=')) {
             return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: corsHeaders });
         }
+        
+        // --- NEW CSRF LOCK ---
+        const csrfHeader = request.headers.get('X-CSRF-Token');
+        const csrfCookieMatch = cookieHeader.match(/csrf_token=([^;]+)/);
+        
+        // The token in the HTTP Header MUST perfectly match the token in the Cookie
+        if (!csrfHeader || !csrfCookieMatch || csrfHeader !== csrfCookieMatch[1]) {
+            return new Response(JSON.stringify({ error: "Forbidden: CSRF token missing or invalid" }), { status: 403, headers: corsHeaders });
+        }
+        // ---------------------
 
         const solverId = cookieHeader.split('vent_session=')[1].split(';')[0];
         const ventId = url.pathname.split('/api/vent/')[1];

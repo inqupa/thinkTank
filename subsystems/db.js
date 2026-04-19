@@ -81,3 +81,36 @@ window.getVents = async function() {
         return []; // Return empty array to prevent frontend crashes
     }
 };
+
+// Secure Data Deletion (Includes CSRF Protection)
+window.deleteVent = async function(ventId) {
+    // 1. Check if we already have a token in our cookies
+    let tokenMatch = document.cookie.match(/csrf_token=([^;]+)/);
+    let csrfToken = tokenMatch ? tokenMatch[1] : null;
+
+    // 2. If not, ask the server to generate one
+    if (!csrfToken) {
+        const res = await fetch('/api/csrf-token');
+        const data = await res.json();
+        csrfToken = data.csrfToken;
+    }
+
+    // 3. Send the sensitive request with the Token attached to the Headers
+    try {
+        const response = await fetch(`/api/vent/${ventId}`, {
+            method: 'DELETE',
+            headers: { 
+                'Content-Type': 'application/json',
+                'X-CSRF-Token': csrfToken // The lock requires this key
+            }
+        });
+        
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error);
+        
+        return result;
+    } catch (err) {
+        console.error("Delete failed:", err.message);
+        return { success: false, error: err.message };
+    }
+};
