@@ -4,9 +4,11 @@
   "description": "",
   "main": "vent_red/vent_red.js",
   "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
       "dev": "npx wrangler dev vent_red/vent_red.js --local --persist-to ../wrangler-data",
       "db:init": "npx wrangler d1 execute vent_black --local --file=./schema.sql --persist-to ../wrangler-data",
-      "db:list": "npx wrangler d1 execute vent_black --local --command='SELECT * FROM vents;' --persist-to ../wrangler-data"
+      "db:list": "npx wrangler d1 execute vent_black --local --command='SELECT * FROM vents;' --persist-to ../wrangler-data",
+      "deploy": "wrangler deploy"
     },
   "keywords": [],
   "author": "",

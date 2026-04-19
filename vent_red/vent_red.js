@@ -12,17 +12,85 @@ export default {
 
     const url = new URL(request.url);
 
+    // Handle New Vent Submission (Unlimited, Anonymous, Trackable)
     if (request.method === "POST" && url.pathname === "/api/vent") {
-      const payload = await request.json();
-      const id = crypto.randomUUID();
-      
-      await env.vent_black.prepare(
-        "INSERT INTO vents (id, content, vent_month_year) VALUES (?, ?, ?)"
-      ).bind(id, payload.content, payload.vent_month_year).run();
+        try {
+            const payload = await request.json();
+            const ventTrackingId = crypto.randomUUID(); // Unique tracker for the Ventor
+            
+            let solverId = null;
 
-      return new Response(JSON.stringify({ success: true, id }), {
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
-      });
+            // If user is a registered Solver, link their ID. Otherwise, it stays NULL (Anonymous)
+            const cookieHeader = request.headers.get('Cookie');
+            if (cookieHeader && cookieHeader.includes('vent_session=')) {
+                solverId = cookieHeader.split('vent_session=')[1].split(';')[0];
+            }
+            
+            // Save the vent. NO limits applied here.
+            await env.vent_black.prepare(
+                "INSERT INTO vents (id, content, vent_month_year, solver_id) VALUES (?, ?, ?, ?)"
+            ).bind(ventTrackingId, payload.content, payload.vent_month_year, solverId).run();
+
+            return new Response(JSON.stringify({ 
+                success: true, 
+                trackingId: ventTrackingId, // Send tracker back to Ventor
+                message: "Vent submitted securely and anonymously."
+            }), {
+                headers: { ...corsHeaders, "Content-Type": "application/json" }
+            });
+        } catch (error) {
+            return new Response(JSON.stringify({ error: error.message }), { status: 500, headers: corsHeaders });
+        }
+    }
+
+    // 2. Enforce Problem Page Limit (Max 10 views for anonymous users)
+    if (request.method === "GET" && url.pathname === "/api/problems/access") {
+        const cookieHeader = request.headers.get('Cookie') || "";
+        const isPeek = url.searchParams.get('peek') === 'true';
+        
+        if (cookieHeader.includes('vent_session=')) {
+            return new Response(JSON.stringify({ access: "granted" }), { status: 200, headers: corsHeaders });
+        }
+
+        let anonToken = null;
+        if (cookieHeader.includes('anon_shadow=')) {
+            anonToken = cookieHeader.split('anon_shadow=')[1].split(';')[0];
+        }
+
+        try {
+            let responseHeaders = new Headers(corsHeaders);
+            responseHeaders.set("Content-Type", "application/json");
+
+            if (!anonToken) {
+                if (isPeek) return new Response(JSON.stringify({ access: "granted", viewsLeft: 10 }), { status: 200, headers: responseHeaders });
+                
+                anonToken = crypto.randomUUID();
+                await env.vent_black.prepare("INSERT INTO anonymous_visitors (id, problem_views) VALUES (?, 1)").bind(anonToken).run();
+                responseHeaders.set("Set-Cookie", `anon_shadow=${anonToken}; HttpOnly; Path=/; Max-Age=31536000; SameSite=Lax`);
+                return new Response(JSON.stringify({ access: "granted", viewsLeft: 9 }), { status: 200, headers: responseHeaders });
+            } else {
+                const visitor = await env.vent_black.prepare("SELECT problem_views FROM anonymous_visitors WHERE id = ?").bind(anonToken).first();
+                
+                if (!visitor) {
+                    if (isPeek) return new Response(JSON.stringify({ access: "granted", viewsLeft: 10 }), { status: 200, headers: responseHeaders });
+                    await env.vent_black.prepare("INSERT INTO anonymous_visitors (id, problem_views) VALUES (?, 1)").bind(anonToken).run();
+                    return new Response(JSON.stringify({ access: "granted", viewsLeft: 9 }), { status: 200, headers: responseHeaders });
+                }
+
+                if (visitor.problem_views >= 10) {
+                    return new Response(JSON.stringify({ error: "Limit reached", requireAuth: true }), { status: 403, headers: responseHeaders });
+                }
+
+                if (!isPeek) {
+                    await env.vent_black.prepare("UPDATE anonymous_visitors SET problem_views = problem_views + 1 WHERE id = ?").bind(anonToken).run();
+                    return new Response(JSON.stringify({ access: "granted", viewsLeft: 9 - visitor.problem_views }), { status: 200, headers: responseHeaders });
+                } else {
+                    return new Response(JSON.stringify({ access: "granted", viewsLeft: 10 - visitor.problem_views }), { status: 200, headers: responseHeaders });
+                }
+            }
+        } catch (error) {
+            return new Response(JSON.stringify({ error: "Server Error" }), { status: 500, headers: corsHeaders });
+        }
     }
 
     // Handle Magic Link Generation (Login & Register)

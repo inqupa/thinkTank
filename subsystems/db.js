@@ -24,18 +24,31 @@ window.initDB = () => {
 // Phase 3.2: Data Access Object (DAO) Methods
 
 // Save a new vent (problem) to the database
-window.saveVent = async (ventData) => {
-    const response = await fetch('/api/vent', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(ventData)
-    });
-    
-    if (!response.ok) throw new Error('Network response was not ok');
-    
-    const result = await response.json();
-    console.log("Phase 3.3: Vent saved to remote D1 database", result);
-    return result;
+window.saveVent = async function(ventData) {
+    try {
+        const response = await fetch('/api/vent', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(ventData)
+        });
+
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.error || "Server rejected vent");
+
+        // Save the Vent Tracking ID locally so the anonymous ventor keeps a receipt
+        let localReceipts = JSON.parse(localStorage.getItem('my_vent_receipts') || '[]');
+        localReceipts.push({
+            trackingId: result.trackingId,
+            date: new Date().toISOString(),
+            preview: ventData.content.substring(0, 30) + '...'
+        });
+        localStorage.setItem('my_vent_receipts', JSON.stringify(localReceipts));
+
+        return result;
+    } catch (err) {
+        console.error("Database save failed:", err);
+        throw err;
+    }
 };
 
 // Retrieve all vents from the database

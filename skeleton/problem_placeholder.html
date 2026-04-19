@@ -9,6 +9,18 @@
         <link rel="stylesheet" href="../skin/base.css">
         <link rel="stylesheet" href="../skin/problem_style_placeholder.css">
         <script src="/subsystems/bootloader/bootloader.js" defer></script>
+        <script>
+            // Check backend access before rendering
+            fetch('/api/problems/access', { method: 'GET' })
+                .then(res => {
+                    if (res.status === 403) {
+                        // Backend enforced the 10-view limit. Redirect to register.
+                        alert("You've viewed the problem registry 10 times. Please register to continue as a Solver.");
+                        window.location.href = '/skeleton/auth_placeholder.html';
+                    }
+                })
+                .catch(err => console.error("Access check failed", err));
+        </script>
     </head>
 
     <body>
@@ -25,53 +37,32 @@
 
         <script>
             document.addEventListener('DOMContentLoaded', () => {
-                
-                // Create an initialization loop to wait for the bootloader
-                const initializeProblemPage = () => {
-                    
-                    // 1. If state isn't injected yet, wait 50ms and try again
-                    if (!window.appState || !window.appState.data) {
-                        setTimeout(initializeProblemPage, 50);
-                        return;
-                    }
-
-                    // 2. Sanitize data (Resets NaN back to 0 if your old save got corrupted)
-                    if (typeof window.appState.data.visitCount !== 'number' || isNaN(window.appState.data.visitCount)) {
-                        window.appState.data.visitCount = 0;
-                    }
-
-                    // Function to evaluate if the suggestion box should be shown
-                    const checkSuggestionStatus = () => {
-                        const count = window.appState.data.visitCount;
-                        const dismissed = window.appState.ui.dismissedSuggestion;
+                fetch('/api/problems/access', { method: 'GET' })
+                    .then(async res => {
+                        if (res.status === 403) {
+                            alert("You've viewed the problem registry 10 times. Please register to continue as a Solver.");
+                            window.location.href = '/skeleton/auth_placeholder.html';
+                            return;
+                        }
                         
-                        console.log(`Checking Suggestion: Count is ${count}, Dismissed is ${dismissed}`);
+                        const data = await res.json();
                         
-                        if (count > 3 && !dismissed) {
+                        // Trigger suggestion box after 3 visits (7 or fewer views left out of 10)
+                        const isDismissed = localStorage.getItem('dismissedSuggestion');
+                        if (data.viewsLeft !== undefined && data.viewsLeft <= 7 && !isDismissed) {
                             const box = document.getElementById('suggestion-box');
                             if (box) box.style.display = 'block';
                         }
-                    };
+                    })
+                    .catch(err => console.error("Access check failed"));
 
-                    // 3. Subscribe to changes
-                    window.subscribeToState('data', checkSuggestionStatus);
-                    window.subscribeToState('ui', checkSuggestionStatus);
-
-                    // 4. Increment the visit count for the current visit
-                    window.appState.data.visitCount++;
-
-                    // 5. Initial check
-                    checkSuggestionStatus();
-
-                    // Handle the "Not Now" choice
-                    document.getElementById('dismiss-suggestion').addEventListener('click', () => {
-                        window.appState.ui.dismissedSuggestion = true;
+                const dismissBtn = document.getElementById('dismiss-suggestion');
+                if (dismissBtn) {
+                    dismissBtn.addEventListener('click', () => {
+                        localStorage.setItem('dismissedSuggestion', 'true');
                         document.getElementById('suggestion-box').style.display = 'none';
                     });
-                };
-
-                // Start the initialization loop
-                initializeProblemPage();
+                }
             });
         </script>
     </body>

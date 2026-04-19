@@ -92,20 +92,13 @@
                     };
                     
                     try {
-                        // Sends data to the backend API
                         await window.saveVent(ventData);
                         
-                        if (window.appState) {
-                            window.appState.data.visitCount++;
-                        }
-                        
-                        // FIX: Wait 500ms before redirecting to allow the debounced state to save
                         setTimeout(() => {
                             window.location.href = '/skeleton/problem_placeholder.html';
                         }, 500);
                         
                     } catch (err) {
-                        console.error("Failed to send vent to backend:", err);
                         alert("Connection failed. Your vent could not be saved.");
                     }
                 }
@@ -113,16 +106,36 @@
         </script>
         
         <script>
-            // Phase 2.1: Predictive Hover Logic
-            const submitBtn = document.querySelector('.input-section button');
+            const submitBtn = document.querySelector('#submit-vent');
+            let hoverChecked = false;
 
             if (submitBtn) {
-                submitBtn.addEventListener('mouseenter', () => {
-                    console.log("%c Predictive Signal: Preparing assets...", "color: #6f42c1;");
-                    if (window.appState) {
-                        window.appState.data.visitCount++;
-                    }
-                });
+                const triggerHover = () => {
+                    if (hoverChecked) return;
+                    hoverChecked = true;
+
+                    const preloads = ['/skeleton/problem_placeholder.html', '/skin/problem_style_placeholder.css'];
+                    preloads.forEach(href => {
+                        const link = document.createElement('link');
+                        link.rel = 'prefetch';
+                        link.href = href;
+                        document.head.appendChild(link);
+                    });
+
+                    fetch('/api/problems/access?peek=true')
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.requireAuth) {
+                                const authLink = document.createElement('link');
+                                authLink.rel = 'prefetch';
+                                authLink.href = '/skeleton/auth_placeholder.html';
+                                document.head.appendChild(authLink);
+                            }
+                        }).catch(err => {});
+                };
+
+                submitBtn.addEventListener('mouseenter', triggerHover, { once: true });
+                submitBtn.addEventListener('touchstart', triggerHover, { once: true });
             }
         </script>
         
