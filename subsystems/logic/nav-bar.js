@@ -41,12 +41,6 @@ class NavBar extends HTMLElement {
             { name: "Profile", href: "/skeleton/profile_placeholder.html" }
         ];
 
-        const style = `
-            nav { background: var(--nav-bg); padding: 10px; display: flex; justify-content: center; }
-            .nav-links a { color: var(--nav-link-color); text-decoration: none; margin: 0 15px; font-family: sans-serif; font-weight: bold; }
-            .nav-links a:hover, .nav-links a.active { color: #3DB5FF; }
-        `;
-
         const nav = document.createElement('nav');
         const navLinks = document.createElement('div');
         navLinks.className = 'nav-links';
@@ -68,7 +62,7 @@ class NavBar extends HTMLElement {
 
         nav.appendChild(navLinks);
 
-        this.shadowRoot.innerHTML = `<style>${style}</style>`;
+        this.shadowRoot.innerHTML = `<link rel="stylesheet" href="/skin/components/nav-bar.css">`;
         this.shadowRoot.appendChild(nav);
     }
 }

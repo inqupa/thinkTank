@@ -43,22 +43,8 @@ class UserCard extends HTMLElement {
         const joinedDate = new Date(userData.joined).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
         const initial = userData.email.charAt(0).toUpperCase();
 
-        const style = `
-            .header { display: flex; flex-direction: column; align-items: center; border-bottom: 1px solid rgba(128,128,128,0.2); padding-bottom: 20px; }
-            .profile-picture { width: 100px; height: 100px; background-color: var(--accent-color); border-radius: 50%; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem; font-family: sans-serif; font-weight: bold; }
-            .username { margin: 5px 0; color: var(--text-primary); font-family: sans-serif; font-size: 1.8rem; text-transform: capitalize; }
-            .role { color: var(--accent-color); font-family: sans-serif; font-weight: bold; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px; }
-            
-            .details-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 20px; font-family: sans-serif; color: var(--text-primary); }
-            .detail-item { display: flex; justify-content: space-between; background: var(--bg-color); padding: 12px 15px; border-radius: 8px; }
-            .detail-label { font-weight: bold; opacity: 0.8; }
-            
-            .logout-btn { margin-top: 30px; width: 100%; padding: 12px; background: transparent; border: 2px solid var(--accent-color); color: var(--text-primary); border-radius: 8px; cursor: pointer; font-weight: bold; transition: all 0.2s; }
-            .logout-btn:hover { background: var(--accent-color); color: white; }
-        `;
-
         this.shadowRoot.innerHTML = `
-            <style>${style}</style>
+            <link rel="stylesheet" href="/skin/components/user-card.css">
             <div class="header">
                 <div class="profile-picture">${initial}</div>
                 <h1 class="username">${userData.name}</h1>
