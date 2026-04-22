@@ -14,95 +14,28 @@
     <body>
         <nav-bar></nav-bar>
         <div class="auth-container">
-            <h1 id="auth-heading" style="color: var(--text-primary); margin-bottom: 10px;">Welcome to Vent</h1>
+            <h1 id="auth-heading" class="auth-heading">Welcome to Vent</h1>
             
-            <p style="color: var(--text-primary); opacity: 0.7; margin-bottom: 30px; line-height: 1.5;">
+            <p class="auth-subtitle">
                 Enter your email. If you're new, we'll create your secure node instantly. No passwords, no friction.
             </p>
             
             <form aria-labelledby="auth-heading">
                 <div class="input-group">
-                    <label for="email" style="color: var(--text-primary); font-size: 0.9rem; font-weight: bold;">Work or Personal Email</label>
+                    <label for="email" class="auth-label">Work or Personal Email</label>
                     <input type="email" id="email" autofocus placeholder="name@example.com" required>
                 </div>
                 
                 <button type="submit">Get Magic Link</button>
             </form>
 
-            <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid rgba(128, 128, 128, 0.1);">
-                <p style="font-size: 0.8rem; color: var(--text-primary); opacity: 0.5;">
+            <div class="auth-footer-container">
+                <p class="auth-footer-text">
                     By entering, you contribute to a collective database of solved problems.
                 </p>
             </div>
         </div>
 
-        <script>
-            const emailInput = document.getElementById('email');
-            const authBtn = document.querySelector('button');
-
-            emailInput.addEventListener('input', (e) => {
-                const value = e.target.value.trim();
-
-                // Check if the input looks like an email and has content
-                if (value.includes('@') && value.length > 5) {
-                    authBtn.textContent = "Secure Your Access";
-                    authBtn.style.filter = "brightness(1.1)";
-                    authBtn.style.transform = "scale(1.02)";
-                } else {
-                    // Immediately revert if the email is invalid or erased
-                    authBtn.textContent = "Get Magic Link";
-                    authBtn.style.filter = "brightness(1.0)";
-                    authBtn.style.transform = "scale(1.0)";
-                }
-            });
-
-            document.querySelector('form').addEventListener('submit', async (e) => {
-                e.preventDefault(); // CRITICAL: Stops the browser from refreshing the page
-
-                const email = emailInput.value.trim();
-                if (!email) return;
-
-                const originalText = authBtn.textContent;
-                authBtn.textContent = "Sending...";
-                authBtn.disabled = true; // Prevent double-clicks
-
-                try {
-                    const response = await fetch('/api/auth/magic-link', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email: email })
-                    });
-
-                    const data = await response.json();
-
-                    // Check if the backend rejected it (e.g., Rate Limit or Validation Error)
-                    if (!response.ok) {
-                        alert(data.error || "Failed to send link.");
-                        authBtn.textContent = originalText;
-                        authBtn.disabled = false;
-                        return;
-                    }
-
-                    // Success state
-                    authBtn.textContent = "Check your email!";
-                    authBtn.style.backgroundColor = "#2a9d8f"; // Visual success cue
-                    authBtn.style.color = "white";
-                    
-                } catch (error) {
-                    console.error("Connection failed:", error);
-                    alert("Network error. Could not reach the server.");
-                    authBtn.textContent = originalText;
-                    authBtn.disabled = false;
-                }
-            });
-        </script>
-
-        <script>
-            // Force focus on page load to ensure "Always Ready" state
-            window.addEventListener('load', () => {
-                const input = document.querySelector('#vent-input') || document.querySelector('#email');
-                if (input) input.focus();
-            });
-        </script>
+        <script src="../subsystems/logic/auth.js" defer></script>
     </body>
 </html>
