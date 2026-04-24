@@ -1,5 +1,5 @@
 {
-	"main": "vent_red/vent_red.js",
+	"main": "subsystems/routers/index.js",
 	"account_id": "584f1d66a20f6e2bc943f16ba0831c40",
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "vent",
