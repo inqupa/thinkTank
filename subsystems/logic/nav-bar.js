@@ -1,6 +1,4 @@
 // subsystems/logic/nav-bar.js
-import navBarStyles from '../../skin/components/nav-bar.css?raw';
-
 class NavBar extends HTMLElement {
     constructor() {
         super();
@@ -71,10 +69,8 @@ class NavBar extends HTMLElement {
 
         nav.appendChild(navLinks);
 
-        this.shadowRoot.innerHTML = `
-            <style>${navBarStyles}</style>
-            <nav></nav>
-        `;
+        this.shadowRoot.innerHTML = `<link rel="stylesheet" href="/skin/components/nav-bar.css">`;
+        this.shadowRoot.appendChild(nav);
     }
 }
 customElements.define('nav-bar', NavBar);
