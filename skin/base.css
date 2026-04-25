@@ -2,9 +2,15 @@
 body {
     background-color: var(--bg-color);
     color: var(--text-primary);
-    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    font-family:
+        'Segoe UI',
+        system-ui,
+        -apple-system,
+        sans-serif;
     margin: 0;
-    transition: background-color 0.4s ease, color 0.4s ease;
+    transition:
+        background-color 0.4s ease,
+        color 0.4s ease;
 }
 
 /* Global 2026 Compliance: High-Contrast Focus States */
@@ -14,7 +20,8 @@ body {
 }
 
 /* Removes default browser margins */
-body, html {
+body,
+html {
     margin: 0;
     padding: 0;
     font-family: sans-serif;
@@ -26,7 +33,7 @@ body, html {
 
     /* Only show vertical scroll if content is longer than the screen */
     overflow-y: auto;
-    
+
     /* Ensure height is consistent for sticky footers */
     min-height: 100vh;
 }
@@ -71,7 +78,7 @@ button {
 }
 
 /* Specific Dark Mode Contrast Adjustment */
-[data-theme="dark"] button {
+[data-theme='dark'] button {
     background-color: var(--accent-color);
     color: #1a1c18; /* Dark text on light accent for readability */
 }
@@ -106,7 +113,7 @@ button:active {
 
 #submit-vent svg {
     /* Adds a subtle 'bloom' to the solid shape to highlight edges and the groove */
-    filter: drop-shadow(0 0 1px rgba(0,0,0,0.1));
+    filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.1));
     transition: transform 0.2s ease;
 }
 
@@ -124,67 +131,67 @@ nav-bar {
 }
 
 .bg-watermark-container {
-    position: absolute; 
-    top: 45%; 
-    left: 50%; 
-    transform: translate(-50%, -50%); 
-    z-index: -1; 
-    width: 100%; 
-    text-align: center; 
-    pointer-events: none; 
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: -1;
+    width: 100%;
+    text-align: center;
+    pointer-events: none;
     user-select: none;
 }
 
 .bg-watermark-text {
-    font-family: 'Courier New', monospace; 
-    font-weight: 900; 
-    font-size: 25vw; 
-    color: var(--accent-color); 
-    opacity: 0.07; 
+    font-family: 'Courier New', monospace;
+    font-weight: 900;
+    font-size: 25vw;
+    color: var(--accent-color);
+    opacity: 0.07;
     letter-spacing: -1.5vw;
     text-transform: uppercase;
     line-height: 1;
 }
 
 .vent-input-container {
-    width: 100%; 
-    max-width: 900px; 
-    padding: 12px 20px 12px 30px; 
-    margin-bottom: 40px; 
-    display: flex; 
-    align-items: flex-end; 
+    width: 100%;
+    max-width: 900px;
+    padding: 12px 20px 12px 30px;
+    margin-bottom: 40px;
+    display: flex;
+    align-items: flex-end;
     gap: 20px;
 }
 
 .vent-input-area {
     flex-grow: 1;
-    min-height: 24px; 
+    min-height: 24px;
     max-height: 300px;
-    justify-content: center; 
+    justify-content: center;
     border: none;
     outline: none;
     background: transparent;
     font-size: 1.4rem;
     font-weight: 500;
     line-height: 1.4;
-    color: var(--text-primary); 
+    color: var(--text-primary);
     resize: none;
-    padding: 5px 0; 
+    padding: 5px 0;
     -webkit-font-smoothing: antialiased;
-    overflow-y: auto; 
+    overflow-y: auto;
     scrollbar-width: none; /* firefox hide */
     -ms-overflow-style: none; /* IE/Edge hide */
 }
 
 .vent-submit-btn {
-    background: none; 
-    border: none; 
-    padding: 0; 
-    cursor: pointer; 
-    display: flex; 
-    align-items: center; 
-    width: 60px; 
-    height: 60px; 
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    width: 60px;
+    height: 60px;
     flex-shrink: 0;
 }
 
@@ -193,7 +200,7 @@ nav-bar {
 }
 
 .footer-text {
-    padding-bottom: 20px; 
-    opacity: 0.4; 
+    padding-bottom: 20px;
+    opacity: 0.4;
     font-size: 0.8rem;
 }

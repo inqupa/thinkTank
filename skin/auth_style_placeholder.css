@@ -22,8 +22,8 @@ nav-bar {
     max-width: 400px;
     text-align: center;
     border: 1px solid rgba(128, 128, 128, 0.1);
-    margin-top: auto;      /* These two lines center the card vertically */
-    margin-bottom: auto;   /* in the remaining space below the nav */
+    margin-top: auto; /* These two lines center the card vertically */
+    margin-bottom: auto; /* in the remaining space below the nav */
 }
 
 .input-group {
@@ -58,31 +58,31 @@ button:hover {
 }
 
 .auth-heading {
-    color: var(--text-primary); 
+    color: var(--text-primary);
     margin-bottom: 10px;
 }
 
 .auth-subtitle {
-    color: var(--text-primary); 
-    opacity: 0.7; 
-    margin-bottom: 30px; 
+    color: var(--text-primary);
+    opacity: 0.7;
+    margin-bottom: 30px;
     line-height: 1.5;
 }
 
 .auth-label {
-    color: var(--text-primary); 
-    font-size: 0.9rem; 
+    color: var(--text-primary);
+    font-size: 0.9rem;
     font-weight: bold;
 }
 
 .auth-footer-container {
-    margin-top: 25px; 
-    padding-top: 20px; 
+    margin-top: 25px;
+    padding-top: 20px;
     border-top: 1px solid rgba(128, 128, 128, 0.1);
 }
 
 .auth-footer-text {
-    font-size: 0.8rem; 
-    color: var(--text-primary); 
+    font-size: 0.8rem;
+    color: var(--text-primary);
     opacity: 0.5;
 }

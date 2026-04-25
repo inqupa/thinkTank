@@ -32,14 +32,17 @@ async function checkForUpdates() {
         const response = await fetch(VERSION_CHECK_URL);
         const data = await response.json();
         const currentVersion = await caches.match('version');
-        
-        if (currentVersion && (await currentVersion.json()).version !== data.version) {
-            console.log("Phase 4.3: New Version Detected. Purging Cache...");
+
+        if (
+            currentVersion &&
+            (await currentVersion.json()).version !== data.version
+        ) {
+            console.log('Phase 4.3: New Version Detected. Purging Cache...');
             await caches.delete(CACHE_NAME);
             // Trigger a re-install of the new version
         }
     } catch (e) {
-        console.warn("Version check skipped (offline).");
+        console.warn('Version check skipped (offline).');
     }
 }
 

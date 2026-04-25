@@ -5,10 +5,14 @@ const parsedState = savedState ? JSON.parse(savedState) : {};
 
 // 2. Define initialState, merging saved data if it exists
 let initialState = {
-    user: { name: "", bio: "", email: "", ...(parsedState.user || {}) },
-    ui: { theme: "light", dismissedSuggestion: false, ...(parsedState.ui || {}) },
+    user: { name: '', bio: '', email: '', ...(parsedState.user || {}) },
+    ui: {
+        theme: 'light',
+        dismissedSuggestion: false,
+        ...(parsedState.ui || {})
+    },
     data: { visitCount: 0, ...(parsedState.data || {}) },
-    subscribers: [] 
+    subscribers: []
 };
 
 // FIX: Always re-attach the empty subscribers array on every page load
@@ -30,7 +34,7 @@ async function loadInitialState() {
             Object.assign(initialState.data, defaults.data);
             localStorage.setItem('app_state_exists', 'true');
         } catch (e) {
-            console.error("Failed to load state snapshot:", e);
+            console.error('Failed to load state snapshot:', e);
         }
     }
 }
@@ -49,7 +53,7 @@ function updateUI(prop, val) {
 
     // Existing logic for other signals...
     const elements = document.querySelectorAll(`[id^="sig-${prop}"]`);
-    elements.forEach(el => {
+    elements.forEach((el) => {
         el.textContent = val;
     });
 }
@@ -60,24 +64,29 @@ function debouncedSaveState() {
     if (saveTimeout) {
         clearTimeout(saveTimeout);
     }
-    
+
     // Set a new timeout to save after 2 seconds (2000 ms) of inactivity
     saveTimeout = setTimeout(() => {
         if (!window.appState) return;
-        
+
         const stateToSave = {
             user: window.appState.user,
             ui: window.appState.ui,
             data: window.appState.data
         };
-        
+
         try {
             localStorage.setItem('vent_app_state', JSON.stringify(stateToSave));
-            console.log("Phase 1 Security: State securely saved to localStorage (debounced)");
+            console.log(
+                'Phase 1 Security: State securely saved to localStorage (debounced)'
+            );
         } catch (e) {
-            console.error("Failed to save state. Storage quota may be exceeded.", e);
+            console.error(
+                'Failed to save state. Storage quota may be exceeded.',
+                e
+            );
         }
-    }, 2000); 
+    }, 2000);
 }
 // --------------------------
 
@@ -87,7 +96,9 @@ function createPersistentState(state) {
     function buildProxy(targetObj, currentDepth) {
         // Structural Check 1: Prevent infinite proxy chains
         if (currentDepth > MAX_DEPTH) {
-            console.warn(`Phase 2: State depth exceeded ${MAX_DEPTH} levels. Returning raw object.`);
+            console.warn(
+                `Phase 2: State depth exceeded ${MAX_DEPTH} levels. Returning raw object.`
+            );
             return targetObj;
         }
 
@@ -95,7 +106,12 @@ function createPersistentState(state) {
             get(target, property) {
                 const value = target[property];
                 // Don't proxy the subscribers array or internal DOM nodes if they sneak in
-                if (value && typeof value === 'object' && property !== 'subscribers' && !Array.isArray(value)) {
+                if (
+                    value &&
+                    typeof value === 'object' &&
+                    property !== 'subscribers' &&
+                    !Array.isArray(value)
+                ) {
                     return buildProxy(value, currentDepth + 1);
                 }
                 return value;
@@ -104,19 +120,29 @@ function createPersistentState(state) {
                 // Structural Check 2: The Idempotency Check (Prevents Infinite Loops)
                 // Only trigger subscribers and save if the value ACTUALLY changed
                 if (target[property] === value) {
-                    return true; 
+                    return true;
                 }
 
                 target[property] = value;
 
                 // Phase 2.3: Improved Broadcast Logic
                 if (window.appState && window.appState.subscribers) {
-                    window.appState.subscribers.forEach(sub => {
-                        if (sub.key === property || sub.key === '*' || sub.key === 'user' || sub.key === 'data' || sub.key === 'ui' || property === 'theme') {
+                    window.appState.subscribers.forEach((sub) => {
+                        if (
+                            sub.key === property ||
+                            sub.key === '*' ||
+                            sub.key === 'user' ||
+                            sub.key === 'data' ||
+                            sub.key === 'ui' ||
+                            property === 'theme'
+                        ) {
                             try {
                                 sub.callback(property, value);
                             } catch (err) {
-                                console.error("Subscriber execution failed:", err);
+                                console.error(
+                                    'Subscriber execution failed:',
+                                    err
+                                );
                             }
                         }
                     });
@@ -139,7 +165,7 @@ function applyTimeTheme() {
     // Only auto-suggest if no manual theme is saved yet
     if (!localStorage.getItem('theme')) {
         const hour = new Date().getHours();
-        const suggestedTheme = (hour < 6 || hour > 18) ? "dark" : "light";
+        const suggestedTheme = hour < 6 || hour > 18 ? 'dark' : 'light';
         window.appState.ui.theme = suggestedTheme;
     }
 }
@@ -155,7 +181,7 @@ window.subscribeToState = (key, callback) => {
 
 async function startStateSystem() {
     // Load defaults asynchronously
-    await loadInitialState(); 
+    await loadInitialState();
 
     // Register core theme subscribers
     window.subscribeToState('theme', (prop, val) => {
@@ -164,7 +190,8 @@ async function startStateSystem() {
 
     // PERSISTENCE FIX: Apply the current theme immediately
     // Access the live value from your namespaced state
-    const currentTheme = window.appState.ui.theme || localStorage.getItem('theme');
+    const currentTheme =
+        window.appState.ui.theme || localStorage.getItem('theme');
     if (currentTheme) {
         updateUI('theme', currentTheme);
     }
@@ -172,7 +199,7 @@ async function startStateSystem() {
     // 5. Run auto-detection
     applyTimeTheme();
 
-    console.log("Phase 1.1: State System Populated");
+    console.log('Phase 1.1: State System Populated');
 }
 
 // Start the loading process

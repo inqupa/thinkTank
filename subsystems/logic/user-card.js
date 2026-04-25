@@ -4,7 +4,7 @@ class UserCard extends HTMLElement {
         super();
         this.attachShadow({ mode: 'open' });
     }
-    
+
     async connectedCallback() {
         this.renderLoading();
         await this.loadUserData();
@@ -40,7 +40,10 @@ class UserCard extends HTMLElement {
     render(userData) {
         if (!userData) return;
 
-        const joinedDate = new Date(userData.joined).toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        const joinedDate = new Date(userData.joined).toLocaleDateString(
+            'en-US',
+            { month: 'long', year: 'numeric' }
+        );
         const initial = userData.email.charAt(0).toUpperCase();
 
         this.shadowRoot.innerHTML = `
@@ -64,10 +67,13 @@ class UserCard extends HTMLElement {
         `;
 
         // Handle Logout by destroying the cookie
-        this.shadowRoot.getElementById('logout').addEventListener('click', () => {
-            document.cookie = "vent_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-            window.location.href = '/index.html';
-        });
+        this.shadowRoot
+            .getElementById('logout')
+            .addEventListener('click', () => {
+                document.cookie =
+                    'vent_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                window.location.href = '/index.html';
+            });
     }
 }
 customElements.define('user-card', UserCard);

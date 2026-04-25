@@ -1,37 +1,50 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Login & Sign Up</title>
-        <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-        <link rel="stylesheet" href="../skin/theme.css">
-        <link rel="stylesheet" href="../skin/base.css">
-        <link rel="stylesheet" href="../skin/auth_style_placeholder.css">
+        <meta
+            http-equiv="Content-Security-Policy"
+            content="upgrade-insecure-requests"
+        />
+        <link rel="stylesheet" href="../skin/theme.css" />
+        <link rel="stylesheet" href="../skin/base.css" />
+        <link rel="stylesheet" href="../skin/auth_style_placeholder.css" />
         <script src="../subsystems/bootloader/bootloader.js" defer></script>
     </head>
-    
+
     <body>
         <nav-bar></nav-bar>
         <div class="auth-container">
             <h1 id="auth-heading" class="auth-heading">Welcome to Vent</h1>
-            
+
             <p class="auth-subtitle">
-                Enter your email. If you're new, we'll create your secure node instantly. No passwords, no friction.
+                Enter your email. If you're new, we'll create your secure node
+                instantly. No passwords, no friction.
             </p>
-            
+
             <form aria-labelledby="auth-heading">
                 <div class="input-group">
-                    <label for="email" class="auth-label">Work or Personal Email</label>
-                    <input type="email" id="email" autofocus placeholder="name@example.com" required>
+                    <label for="email" class="auth-label"
+                        >Work or Personal Email</label
+                    >
+                    <input
+                        type="email"
+                        id="email"
+                        autofocus
+                        placeholder="name@example.com"
+                        required
+                    />
                 </div>
-                
+
                 <button type="submit">Get Magic Link</button>
             </form>
 
             <div class="auth-footer-container">
                 <p class="auth-footer-text">
-                    By entering, you contribute to a collective database of solved problems.
+                    By entering, you contribute to a collective database of
+                    solved problems.
                 </p>
             </div>
         </div>

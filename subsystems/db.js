@@ -10,7 +10,10 @@ window.initDB = () => {
         request.onupgradeneeded = (event) => {
             const db = event.target.result;
             if (!db.objectStoreNames.contains('vents')) {
-                db.createObjectStore('vents', { keyPath: 'id', autoIncrement: true });
+                db.createObjectStore('vents', {
+                    keyPath: 'id',
+                    autoIncrement: true
+                });
             }
             if (!db.objectStoreNames.contains('settings')) {
                 db.createObjectStore('settings', { keyPath: 'key' });

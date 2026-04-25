@@ -14,7 +14,7 @@
     --profile-detail-text: var(--text-primary);
 }
 
-[data-theme="dark"] {
+[data-theme='dark'] {
     /* Design Tokens - Dark Mode */
     --bg-color: #1a1c18;
     --card-bg: #23261f;
