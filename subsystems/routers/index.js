@@ -39,7 +39,8 @@ class SimpleRouter {
         // Define CORS dynamically based on the incoming request
         const allowedOrigins = [
             'http://localhost:8787',
-            'https://vent.inqupa.workers.dev'
+            'https://vent.inqupa.workers.dev',
+            'http://localhost:3000'
         ];
         const origin = request.headers.get('Origin');
         const isAllowedOrigin = allowedOrigins.includes(origin)
