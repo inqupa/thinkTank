@@ -5,11 +5,17 @@
   "main": "subsystems/routers/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx wrangler dev subsystems/routers/index.js --local --persist-to ../wrangler-data",
-    "db:list": "npx wrangler d1 execute vent_black --local --command='SELECT * FROM vents;' --persist-to ../wrangler-data",
-    "deploy": "wrangler deploy",
+    "dev:ui": "vite",
+    "dev:api": "wrangler dev --persist-to ../wrangler-data",
+    "build": "vite build",
+    "deploy": "npm run build && wrangler deploy",
     "format": "prettier --write \"**/*.{js,css,html}\"",
-    "lint": "eslint \"**/*.js\""
+    "lint": "eslint \"**/*.js\"",
+    "db:list": "wrangler d1 execute vent_black --command='SELECT * FROM vents;' --persist-to ../wrangler-data",
+    "db:setup:local": "wrangler d1 execute vent_black --local --persist-to=../wrangler-data --file=./sql/01_create_solvers.sql && wrangler d1 execute vent_black --local --persist-to=../wrangler-data --file=./sql/02_create_magic_links.sql && wrangler d1 execute vent_black --local --persist-to=../wrangler-data --file=./sql/03_create_vents.sql && wrangler d1 execute vent_black --local --persist-to=../wrangler-data --file=./sql/04_create_anonymous_visitors.sql",
+    "db:reset:local": "wrangler d1 execute vent_black --local --persist-to=../wrangler-data --file=./sql/00_drop_tables.sql && npm run db:setup:local",
+    "db:setup:prod": "wrangler d1 execute vent_black --remote --file=./sql/01_create_solvers.sql && wrangler d1 execute vent_black --remote --file=./sql/02_create_magic_links.sql && wrangler d1 execute vent_black --remote --file=./sql/03_create_vents.sql && wrangler d1 execute vent_black --remote --file=./sql/04_create_anonymous_visitors.sql",
+    "db:reset:prod": "echo \"DANGER: Run 'wrangler d1 execute vent_black --remote --file=./sql/00_drop_tables.sql' manually if you REALLY want to destroy production data.\""   
   },
   "keywords": [],
   "author": "",
@@ -17,6 +23,7 @@
   "type": "commonjs",
   "devDependencies": {
     "eslint": "^10.2.1",
-    "prettier": "^3.8.3"
+    "prettier": "^3.8.3",
+    "vite": "^8.0.10"
   }
 }
