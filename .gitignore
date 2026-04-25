@@ -1,6 +1,10 @@
+# build artifacts
+/dist
+.vite/
+
 # miscellaneous folders
-/.vscode
-/tools
+.vscode/
+tools/
 node_modules/
 
 
