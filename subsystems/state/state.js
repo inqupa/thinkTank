@@ -1,3 +1,5 @@
+import defaultStateData from '../../data/default_state.json';
+
 let saveTimeout = null;
 // 1. Try to load existing state from the hard drive first
 const savedState = localStorage.getItem('vent_app_state');
@@ -26,8 +28,7 @@ async function loadInitialState() {
     const saved = localStorage.getItem('app_state_exists');
     if (!saved) {
         try {
-            const response = await fetch('/data/default_state.json');
-            const defaults = await response.json();
+            const defaults = defaultStateData;
             // Deep merge defaults into initialState
             Object.assign(initialState.user, defaults.user);
             Object.assign(initialState.ui, defaults.ui);
