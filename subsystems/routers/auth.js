@@ -100,7 +100,7 @@ export function registerAuthRoutes(router) {
             .bind(token)
             .run();
 
-        const cookie = `vent_session=${user.id}; HttpOnly; Path=/; Max-Age=604800; SameSite=Lax`;
+        const cookie = `vent_session=${user.id}; HttpOnly; Path=/; Max-Age=604800; SameSite=None; Secure`;
         return new Response(null, {
             status: 302,
             headers: {

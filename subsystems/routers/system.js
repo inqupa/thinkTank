@@ -8,8 +8,8 @@ export function registerSystemRoutes(router) {
         headers.set(
             'Set-Cookie',
             enable
-                ? 'vent_godmode=true; Path=/; Max-Age=31536000; SameSite=Lax'
-                : 'vent_godmode=; Path=/; Max-Age=0; SameSite=Lax'
+                ? 'vent_godmode=true; Path=/; Max-Age=31536000; SameSite=None; Secure'
+                : 'vent_godmode=; Path=/; Max-Age=0; SameSite=None; Secure'
         );
         return new Response(
             enable ? 'God mode enabled.' : 'God mode disabled.',
@@ -57,7 +57,7 @@ export function registerSystemRoutes(router) {
                 .run();
             headers.set(
                 'Set-Cookie',
-                `anon_shadow=${anonToken}; HttpOnly; Path=/; Max-Age=31536000; SameSite=Lax`
+                `anon_shadow=${anonToken}; HttpOnly; Path=/; Max-Age=31536000; SameSite=None; Secure`
             );
             return new Response(
                 JSON.stringify({ access: 'granted', viewsLeft: 9 }),
@@ -128,7 +128,7 @@ export function registerSystemRoutes(router) {
         let headers = new Headers({ 'Content-Type': 'application/json' });
         headers.set(
             'Set-Cookie',
-            `csrf_token=${token}; Path=/; SameSite=Strict; Max-Age=86400`
+            `csrf_token=${token}; Path=/; Max-Age=86400; SameSite=None; Secure`
         );
         return new Response(JSON.stringify({ csrfToken: token }), {
             status: 200,

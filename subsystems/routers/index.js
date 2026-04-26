@@ -52,6 +52,7 @@ class SimpleRouter {
             'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
             'Access-Control-Allow-Headers':
                 'Content-Type, X-CSRF-Token, Cookie',
+            'Access-Control-Allow-Credentials': 'true',
             'Content-Security-Policy':
                 "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;"
         };

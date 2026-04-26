@@ -1,6 +1,7 @@
 window.saveVent = async function (ventData) {
     try {
         const response = await fetch('/api/vent', {
+            credentials: 'include',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(ventData)
@@ -31,6 +32,7 @@ window.saveVent = async function (ventData) {
 window.getVents = async function () {
     try {
         const response = await fetch('/api/vents', {
+            credentials: 'include',
             method: 'GET',
             headers: { 'Content-Type': 'application/json' }
         });
@@ -58,6 +60,7 @@ window.deleteVent = async function (ventId) {
 
     try {
         const response = await fetch(`/api/vent/${ventId}`, {
+            credentials: 'include',
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
