@@ -1,12 +1,20 @@
-// 1. Core App Initialization (Service Worker & DB)
+// subsystems/logic/home.js
+
+// 1. Import the virtual module at the top of your file
+import { registerSW } from 'virtual:pwa-register';
+
 const startApp = async () => {
     if ('serviceWorker' in navigator) {
         try {
-            await navigator.serviceWorker.register('/sw.js', {
-                type: import.meta.env.DEV ? 'module' : 'classic'
+            // Let the plugin handle the environment-specific paths and registration
+            const updateSW = registerSW({
+                onRegistered(r) {
+                    console.log('Phase 3.3: Service Worker Active');
+                },
+                onRegisterError(err) {
+                    console.error('SW Registration Failed:', err);
+                }
             });
-
-            console.log('Phase 3.3: Service Worker Active');
         } catch (err) {
             console.error('SW Registration Failed:', err);
         }
