@@ -1,3 +1,14 @@
+/**
+ * @typedef {Object} VentData
+ * @property {string} content - The text content of the vent to be saved.
+ */
+
+/**
+ * Saves a new vent to the database and keeps a local receipt in localStorage.
+ * * @param {VentData} ventData - The data for the vent being created.
+ * @returns {Promise<{ trackingId: string, [key: string]: any }>} The server response containing the tracking ID.
+ * @throws {Error} Throws an error if the server rejects the vent or the fetch fails.
+ */
 window.saveVent = async function (ventData) {
     try {
         const response = await fetch('/api/vent', {
@@ -29,6 +40,10 @@ window.saveVent = async function (ventData) {
     }
 };
 
+/**
+ * Fetches the list of available vents from the server.
+ * * @returns {Promise<Array<Object>>} A promise that resolves to an array of vent objects, or an empty array if the fetch fails.
+ */
 window.getVents = async function () {
     try {
         const response = await fetch('/api/vents', {
@@ -48,6 +63,11 @@ window.getVents = async function () {
     }
 };
 
+/**
+ * Deletes a specific vent from the server, handling CSRF token retrieval if missing.
+ * * @param {string|number} ventId - The unique identifier of the vent to delete.
+ * @returns {Promise<{ success?: boolean, error?: string, [key: string]: any }>} A promise that resolves to the server's response object.
+ */
 window.deleteVent = async function (ventId) {
     let tokenMatch = document.cookie.match(/csrf_token=([^;]+)/);
     let csrfToken = tokenMatch ? tokenMatch[1] : null;
