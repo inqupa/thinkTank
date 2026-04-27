@@ -1,11 +1,19 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const emailInput = document.getElementById('email');
-    const authBtn = document.querySelector('button[type="submit"]');
+interface MagicLinkResponse {
+    error?: string;
+    message?: string;
+    [key: string]: any;
+}
 
-    if (emailInput && authBtn) {
+document.addEventListener('DOMContentLoaded', () => {
+    const emailInput = document.getElementById('email') as HTMLInputElement | null;
+    const authBtn = document.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+    const form = document.querySelector('form') as HTMLFormElement | null;
+
+    if (emailInput && authBtn && form) {
         // Email Input Dynamic Styling
-        emailInput.addEventListener('input', (e) => {
-            const value = e.target.value.trim();
+        emailInput.addEventListener('input', (e: Event) => {
+            const target = e.target as HTMLInputElement;
+            const value = target.value.trim();
 
             if (value.includes('@') && value.length > 5) {
                 authBtn.textContent = 'Secure Your Access';
@@ -19,13 +27,13 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Form Submission
-        document.querySelector('form').addEventListener('submit', async (e) => {
+        form.addEventListener('submit', async (e: Event) => {
             e.preventDefault();
 
             const email = emailInput.value.trim();
             if (!email) return;
 
-            const originalText = authBtn.textContent;
+            const originalText = authBtn.textContent || 'Get Magic Link';
             authBtn.textContent = 'Sending...';
             authBtn.disabled = true;
 
@@ -36,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify({ email: email })
                 });
 
-                const data = await response.json();
+                const data: MagicLinkResponse = await response.json();
 
                 if (!response.ok) {
                     alert(data.error || 'Failed to send link.');
@@ -48,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 authBtn.textContent = 'Check your email!';
                 authBtn.style.backgroundColor = '#2a9d8f';
                 authBtn.style.color = 'white';
-            } catch (error) {
+            } catch (error: any) {
                 console.error('Connection failed:', error);
                 alert('Network error. Could not reach the server.');
                 authBtn.textContent = originalText;
@@ -58,6 +66,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Force focus on page load
-    const input = document.querySelector('#email');
-    if (input) input.focus();
+    if (emailInput) emailInput.focus();
 });
