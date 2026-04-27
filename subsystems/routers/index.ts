@@ -1,16 +1,39 @@
+// subsystems/routers/index.ts
+
 // --- IMPORT CONTROLLERS ---
 import { registerAuthRoutes } from './auth.js';
 import { registerVentRoutes } from './vents.js';
 import { registerSystemRoutes } from './system.js';
 
+// --- TYPE DEFINITIONS ---
+export interface Env {
+    vent_black: any; // Cloudflare D1 Database binding
+    [key: string]: any;
+}
+
+export interface RouterRequest extends Request {
+    params?: Record<string, string>;
+}
+
+export type RouteHandler = (request: RouterRequest, env: Env, url: URL) => Promise<Response> | Response;
+
+export interface Route {
+    method: string;
+    regex: RegExp;
+    handler: RouteHandler;
+    paramNames: string[];
+}
+
 // --- 1. NATIVE ROUTER CORE ---
 class SimpleRouter {
+    routes: Route[];
+
     constructor() {
         this.routes = [];
     }
 
-    add(method, path, handler) {
-        const paramNames = [];
+    add(method: string, path: string, handler: RouteHandler): void {
+        const paramNames: string[] = [];
         const regexPath = path.replace(/:([^\/]+)/g, (_, paramName) => {
             paramNames.push(paramName);
             return '([^/]+)';
@@ -23,17 +46,17 @@ class SimpleRouter {
         });
     }
 
-    get(path, handler) {
+    get(path: string, handler: RouteHandler): void {
         this.add('GET', path, handler);
     }
-    post(path, handler) {
+    post(path: string, handler: RouteHandler): void {
         this.add('POST', path, handler);
     }
-    delete(path, handler) {
+    delete(path: string, handler: RouteHandler): void {
         this.add('DELETE', path, handler);
     }
 
-    async handle(request, env) {
+    async handle(request: Request, env: Env): Promise<Response> {
         const url = new URL(request.url);
 
         // Define CORS dynamically based on the incoming request
@@ -43,11 +66,11 @@ class SimpleRouter {
             'http://localhost:3000'
         ];
         const origin = request.headers.get('Origin');
-        const isAllowedOrigin = allowedOrigins.includes(origin)
-            ? origin
+        const isAllowedOrigin = allowedOrigins.includes(origin || '')
+            ? origin!
             : allowedOrigins[0];
 
-        const corsHeaders = {
+        const corsHeaders: Record<string, string> = {
             'Access-Control-Allow-Origin': isAllowedOrigin,
             'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
             'Access-Control-Allow-Headers':
@@ -65,13 +88,14 @@ class SimpleRouter {
             if (route.method === request.method) {
                 const match = url.pathname.match(route.regex);
                 if (match) {
-                    request.params = {};
+                    const routerReq = request as RouterRequest;
+                    routerReq.params = {};
                     route.paramNames.forEach((name, i) => {
-                        request.params[name] = match[i + 1];
+                        routerReq.params![name] = match[i + 1];
                     });
 
                     try {
-                        const response = await route.handler(request, env, url);
+                        const response = await route.handler(routerReq, env, url);
                         const newResponse = new Response(
                             response.body,
                             response
@@ -110,7 +134,7 @@ registerSystemRoutes(router);
 // --- 2. API ENDPOINTS ---
 
 // Fetch Current User's Vents
-router.get('/api/user/vents', async (request, env) => {
+router.get('/api/user/vents', async (request: RouterRequest, env: Env): Promise<Response> => {
     const cookieHeader = request.headers.get('Cookie');
     if (!cookieHeader || !cookieHeader.includes('vent_session='))
         return new Response(JSON.stringify({ error: 'Unauthorized' }), {
@@ -132,5 +156,5 @@ router.get('/api/user/vents', async (request, env) => {
 
 // --- 3. EXPORT HANDLER ---
 export default {
-    fetch: (request, env) => router.handle(request, env)
+    fetch: (request: Request, env: Env): Promise<Response> => router.handle(request, env)
 };
