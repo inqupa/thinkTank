@@ -1,5 +1,10 @@
-// subsystems/logic/nav-bar.js
+// subsystems/logic/nav-bar.ts
 import navStyles from '../../skin/components/nav-bar.css?inline';
+
+interface NavLink {
+    name: string;
+    href: string;
+}
 
 class NavBar extends HTMLElement {
     constructor() {
@@ -7,7 +12,7 @@ class NavBar extends HTMLElement {
         this.attachShadow({ mode: 'open' });
     }
 
-    connectedCallback() {
+    connectedCallback(): void {
         // Safeguard: Visual Alarm for God Mode
         if (document.cookie.includes('vent_godmode=true')) {
             const warningBanner = document.createElement('div');
@@ -36,8 +41,8 @@ class NavBar extends HTMLElement {
         this.render();
     }
 
-    render() {
-        const links = [
+    render(): void {
+        const links: NavLink[] = [
             { name: 'Home', href: '/index.html' },
             {
                 name: 'Vents | Problems',
@@ -51,7 +56,7 @@ class NavBar extends HTMLElement {
         const navLinks = document.createElement('div');
         navLinks.className = 'nav-links';
 
-        links.forEach((link) => {
+        links.forEach((link: NavLink) => {
             const a = document.createElement('a');
             a.href = link.href;
             a.textContent = link.name;
@@ -71,8 +76,10 @@ class NavBar extends HTMLElement {
 
         nav.appendChild(navLinks);
 
-        this.shadowRoot.innerHTML = `<style>${navStyles}</style>`;
-        this.shadowRoot.appendChild(nav);
+        if (this.shadowRoot) {
+            this.shadowRoot.innerHTML = `<style>${navStyles}</style>`;
+            this.shadowRoot.appendChild(nav);
+        }
     }
 }
 customElements.define('nav-bar', NavBar);
