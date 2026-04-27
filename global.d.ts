@@ -6,3 +6,8 @@ declare module '*.css?inline' {
     const content: string;
     export default content;
 }
+
+// Teach TypeScript about Vite's virtual PWA module
+declare module 'virtual:pwa-register' {
+    export function registerSW(options?: any): (reloadPage?: boolean) => Promise<void>;
+}

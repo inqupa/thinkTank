@@ -1,17 +1,31 @@
-// subsystems/logic/home.js
+// subsystems/logic/home.ts
 
 // 1. Import the virtual module at the top of your file
 import { registerSW } from 'virtual:pwa-register';
 
-const startApp = async () => {
+// Define the shape of the data passed to the global save function
+interface VentSubmitData {
+    content: string;
+    vent_month_year: string;
+}
+
+// Tell TypeScript these functions exist on the global window object
+declare global {
+    interface Window {
+        initDB?: () => Promise<any>;
+        saveVent?: (data: VentSubmitData) => Promise<any>;
+    }
+}
+
+const startApp = async (): Promise<void> => {
     if ('serviceWorker' in navigator) {
         try {
             // Let the plugin handle the environment-specific paths and registration
-            const updateSW = registerSW({
-                onRegistered(r) {
+            registerSW({
+                onRegistered(_r: any) {
                     console.log('Phase 3.3: Service Worker Active');
                 },
-                onRegisterError(err) {
+                onRegisterError(err: any) {
                     console.error('SW Registration Failed:', err);
                 }
             });
@@ -27,7 +41,8 @@ const startApp = async () => {
         } catch (dbErr) {
             console.error('Database initialization failed:', dbErr);
             const errorBanner = document.createElement('div');
-            errorBanner.style =
+            // TS Fix: Use cssText instead of direct string assignment to the style object
+            errorBanner.style.cssText =
                 'position:fixed; top:0; width:100%; background:red; color:white; text-align:center; padding:10px; z-index:9999; font-family:sans-serif;';
             errorBanner.textContent =
                 'Critical Error: Offline storage is unavailable.';
@@ -39,9 +54,10 @@ const startApp = async () => {
 window.addEventListener('load', startApp);
 
 // 2. Textarea Auto-Resize & Focus Logic
-const tx = document.getElementById('vent-input');
+const tx = document.getElementById('vent-input') as HTMLTextAreaElement | null;
 
-function OnInput() {
+// TS Fix: Explicitly define what 'this' refers to within the function
+function OnInput(this: HTMLTextAreaElement): void {
     this.style.height = 'auto';
     this.style.height = this.scrollHeight + 'px';
 }
@@ -57,23 +73,25 @@ if (tx) {
 
 window.addEventListener('load', () => {
     const input =
-        document.querySelector('#vent-input') ||
-        document.querySelector('#email');
+        document.querySelector<HTMLTextAreaElement>('#vent-input') ||
+        document.querySelector<HTMLInputElement>('#email');
     if (input) input.focus();
 });
 
 // 3. Submit Vent Logic
-const submitBtn = document.querySelector('#submit-vent');
+const submitBtn = document.querySelector<HTMLButtonElement>('#submit-vent');
 
 if (submitBtn) {
-    submitBtn.addEventListener('click', async function (e) {
+    submitBtn.addEventListener('click', async function (e: Event) {
         e.preventDefault();
 
-        const input = document.getElementById('vent-input');
+        const input = document.getElementById('vent-input') as HTMLTextAreaElement | null;
+        if (!input) return;
+
         const content = input.value.trim();
 
         if (content && window.saveVent) {
-            const ventData = {
+            const ventData: VentSubmitData = {
                 content: content,
                 vent_month_year: new Date().toLocaleString('en-US', {
                     month: 'long',
@@ -95,11 +113,11 @@ if (submitBtn) {
 
     // 4. Preload Resources on Hover
     let hoverChecked = false;
-    const triggerHover = () => {
+    const triggerHover = (): void => {
         if (hoverChecked) return;
         hoverChecked = true;
 
-        const preloads = [
+        const preloads: string[] = [
             '/skeleton/problem_placeholder.html',
             '/skin/problem_style_placeholder.css'
         ];
@@ -112,7 +130,7 @@ if (submitBtn) {
 
         fetch('/api/problems/access?peek=true')
             .then((res) => res.json())
-            .then((data) => {
+            .then((data: { requireAuth?: boolean }) => {
                 if (data.requireAuth) {
                     const authLink = document.createElement('link');
                     authLink.rel = 'prefetch';
@@ -120,7 +138,7 @@ if (submitBtn) {
                     document.head.appendChild(authLink);
                 }
             })
-            .catch((err) => {});
+            .catch((_err) => {});
     };
 
     submitBtn.addEventListener('mouseenter', triggerHover, { once: true });
