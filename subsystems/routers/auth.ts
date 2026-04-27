@@ -1,25 +1,36 @@
-// subsystems/routers/auth.js
+// subsystems/routers/auth.ts
 
-export function registerAuthRoutes(router) {
+// --- TYPE DEFINITIONS ---
+interface Env {
+    vent_black: any; // Cloudflare D1 Database binding
+}
+
+interface MagicLinkPayload {
+    email?: string;
+    [key: string]: any;
+}
+
+export function registerAuthRoutes(router: any): void {
     // 1. Handle Magic Link Generation
-    router.post('/api/auth/magic-link', async (request, env) => {
-        const data = await request.json();
+    router.post('/api/auth/magic-link', async (request: Request, env: Env): Promise<Response> => {
+        const data: MagicLinkPayload = await request.json();
         const { email } = data;
 
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!email || !emailRegex.test(email) || email.length > 100) {
             return new Response(
                 JSON.stringify({ error: 'Valid email required' }),
-                { status: 400 }
+                { status: 400, headers: { 'Content-Type': 'application/json' } }
             );
         }
 
-        const recentLink = await env.vent_black
+        const recentLink: any = await env.vent_black
             .prepare(
                 'SELECT created_at FROM magic_links WHERE email = ? ORDER BY created_at DESC LIMIT 1'
             )
             .bind(email)
             .first();
+            
         if (recentLink) {
             const dbTimeUTC = new Date(recentLink.created_at + 'Z').getTime();
             const timeSinceLastLink = Date.now() - dbTimeUTC;
@@ -28,15 +39,16 @@ export function registerAuthRoutes(router) {
                     JSON.stringify({
                         error: 'Please wait 60 seconds before requesting another link.'
                     }),
-                    { status: 429 }
+                    { status: 429, headers: { 'Content-Type': 'application/json' } }
                 );
             }
         }
 
-        const userCheck = await env.vent_black
+        const userCheck: any = await env.vent_black
             .prepare('SELECT id FROM solvers WHERE email = ?')
             .bind(email)
             .first();
+            
         if (!userCheck) {
             const newId = crypto.randomUUID();
             await env.vent_black
@@ -66,16 +78,17 @@ export function registerAuthRoutes(router) {
     });
 
     // 2. Handle Magic Link Verification
-    router.get('/api/auth/verify', async (request, env, url) => {
+    router.get('/api/auth/verify', async (_request: Request, env: Env, url: URL): Promise<Response> => {
         const token = url.searchParams.get('token');
         if (!token) return new Response('Missing token', { status: 400 });
 
-        const linkRecord = await env.vent_black
+        const linkRecord: any = await env.vent_black
             .prepare(
                 'SELECT email, expires_at FROM magic_links WHERE token = ?'
             )
             .bind(token)
             .first();
+            
         if (!linkRecord)
             return new Response('Invalid or already used link.', {
                 status: 401
@@ -91,10 +104,11 @@ export function registerAuthRoutes(router) {
             });
         }
 
-        const user = await env.vent_black
+        const user: any = await env.vent_black
             .prepare('SELECT id FROM solvers WHERE email = ?')
             .bind(linkRecord.email)
             .first();
+            
         await env.vent_black
             .prepare('DELETE FROM magic_links WHERE token = ?')
             .bind(token)
@@ -111,24 +125,25 @@ export function registerAuthRoutes(router) {
     });
 
     // 3. Fetch Current User
-    router.get('/api/user/me', async (request, env) => {
+    router.get('/api/user/me', async (request: Request, env: Env): Promise<Response> => {
         const cookieHeader = request.headers.get('Cookie');
         if (!cookieHeader || !cookieHeader.includes('vent_session='))
             return new Response(
                 JSON.stringify({ error: 'Not authenticated' }),
-                { status: 401 }
+                { status: 401, headers: { 'Content-Type': 'application/json' } }
             );
 
         const sessionId = cookieHeader.split('vent_session=')[1].split(';')[0];
-        const user = await env.vent_black
+        const user: any = await env.vent_black
             .prepare('SELECT id, email, created_at FROM solvers WHERE id = ?')
             .bind(sessionId)
             .first();
 
         if (!user)
             return new Response(JSON.stringify({ error: 'User not found' }), {
-                status: 404
+                status: 404, headers: { 'Content-Type': 'application/json' }
             });
+            
         return new Response(
             JSON.stringify({
                 name: user.email.split('@')[0],
