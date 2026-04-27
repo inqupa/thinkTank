@@ -1,19 +1,45 @@
-// subsystems/logic/problem.js
+// subsystems/logic/problem.ts
 
+// TS FIX: This empty export forces TypeScript to treat this file as a module,
+// which allows us to safely use 'declare global' below!
+export {};
+
+// --- TYPE DEFINITIONS ---
+interface AccessResponse {
+    viewsLeft?: number;
+    requireAuth?: boolean;
+    access?: string;
+    [key: string]: any;
+}
+
+interface VentRecord {
+    content: string;
+    created_at: string;
+    is_test?: number;
+    [key: string]: any;
+}
+
+declare global {
+    interface Window {
+        getVents?: () => Promise<VentRecord[]>;
+    }
+}
+
+// --- INITIALIZATION ---
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Check Access Limits (Replaces the inline <head> script as well)
+    // 1. Check Access Limits
     fetch('/api/problems/access', { method: 'GET' })
-        .then(async (res) => {
+        .then(async (res: Response) => {
             if (res.status === 403) {
-                // Backend enforced the 10-view limit. Redirect to register.
+                // Backend enforced the limit. Redirect to register.
                 alert(
-                    "You've viewed the problem registry 10 times. Please register to continue as a Solver."
+                    "You've viewed the problem registry limit. Please register to continue as a Member."
                 );
                 window.location.href = '/skeleton/auth_placeholder.html';
                 return;
             }
 
-            const data = await res.json();
+            const data: AccessResponse = await res.json();
 
             // Handle Suggestion Box
             const isDismissed = localStorage.getItem('dismissedSuggestion');
@@ -22,29 +48,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 data.viewsLeft <= 7 &&
                 !isDismissed
             ) {
-                const box = document.getElementById('suggestion-box');
+                const box = document.getElementById('suggestion-box') as HTMLElement | null;
                 if (box) box.style.display = 'block';
             }
 
             // 2. Access Granted: Fetch and Render Vents
             loadAndRenderVents();
         })
-        .catch((err) => console.error('Access check failed', err));
+        .catch((err: any) => console.error('Access check failed', err));
 
     // Suggestion Box Dismissal Logic
-    const dismissBtn = document.getElementById('dismiss-suggestion');
+    const dismissBtn = document.getElementById('dismiss-suggestion') as HTMLButtonElement | null;
     if (dismissBtn) {
         dismissBtn.addEventListener('click', () => {
             localStorage.setItem('dismissedSuggestion', 'true');
-            const box = document.getElementById('suggestion-box');
+            const box = document.getElementById('suggestion-box') as HTMLElement | null;
             if (box) box.style.display = 'none';
         });
     }
 });
 
-// The Secure Rendering Engine
-async function loadAndRenderVents() {
-    const feedContainer = document.getElementById('vent-feed-container');
+// --- CORE RENDERING ENGINE ---
+async function loadAndRenderVents(): Promise<void> {
+    const feedContainer = document.getElementById('vent-feed-container') as HTMLElement | null;
     if (!feedContainer || !window.getVents) return;
 
     feedContainer.textContent = 'Loading network data...';
@@ -57,9 +83,7 @@ async function loadAndRenderVents() {
         return;
     }
 
-    // XSS Protection: We create elements dynamically and use .textContent
-    // This guarantees the browser treats input as raw text, never as executable HTML/JS.
-    vents.forEach((vent) => {
+    vents.forEach((vent: VentRecord) => {
         // Skip quarantined test data unless we are in God Mode
         if (
             vent.is_test === 1 &&
@@ -69,10 +93,10 @@ async function loadAndRenderVents() {
         }
 
         const card = document.createElement('div');
-        card.className = 'vent-card'; // Replaced inline CSS!
+        card.className = 'vent-card'; 
 
         const dateHeader = document.createElement('small');
-        dateHeader.className = 'vent-date-header'; // Replaced inline CSS!
+        dateHeader.className = 'vent-date-header'; 
 
         // Parse date securely
         dateHeader.textContent = new Date(vent.created_at).toLocaleString(
@@ -86,12 +110,12 @@ async function loadAndRenderVents() {
 
         if (vent.is_test === 1) {
             dateHeader.textContent += ' [TEST DATA]';
-            dateHeader.classList.add('vent-test-data'); // Replaced inline CSS!
+            dateHeader.classList.add('vent-test-data'); 
         }
 
         const contentBody = document.createElement('p');
-        contentBody.className = 'vent-content-body'; // Replaced inline CSS!
-        contentBody.textContent = vent.content; // Strict XSS protection
+        contentBody.className = 'vent-content-body'; 
+        contentBody.textContent = vent.content; 
 
         card.appendChild(dateHeader);
         card.appendChild(contentBody);
