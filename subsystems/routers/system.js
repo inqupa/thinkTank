@@ -1,9 +1,20 @@
 // subsystems/routers/system.js
 
 export function registerSystemRoutes(router) {
-    // 1. Developer God Mode Toggle
+    // 1. Developer God Mode Toggle (SECURED VIA ENV)
     router.get('/api/dev/godmode', (request, env, url) => {
         const enable = url.searchParams.get('enable') === 'true';
+        const providedKey = url.searchParams.get('key'); 
+
+        // 1. Pull the secret from the Cloudflare environment
+        const SECRET_PASSCODE = env.GOD_MODE_KEY; 
+
+        // 2. Failsafe: If the server is misconfigured and the secret is missing, 
+        // or if the user provides the wrong key, block access.
+        if (!SECRET_PASSCODE || providedKey !== SECRET_PASSCODE) {
+            return new Response('Not Found', { status: 404 });
+        }
+        
         let headers = new Headers();
         headers.set(
             'Set-Cookie',
