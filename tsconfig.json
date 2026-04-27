@@ -1,0 +1,27 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "lib": ["ESNext", "DOM", "DOM.Iterable"],
+    "skipLibCheck": true,
+
+    /* The "Gradual Migration" Magic Settings */
+    "allowJs": true,
+    "checkJs": false,
+
+    /* Vite & Bundler Compatibility */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+
+    /* Strict Type Checking for .ts files */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true
+  },
+  "include": ["**/*.js", "**/*.ts", "**/*.json"],
+  "exclude": ["node_modules", "dist", "dev-dist", ".wrangler"]
+}

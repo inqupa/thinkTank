@@ -1,15 +1,19 @@
-/**
- * @typedef {Object} VentData
- * @property {string} content - The text content of the vent to be saved.
- */
+// subsystems/services/api.ts
 
-/**
- * Saves a new vent to the database and keeps a local receipt in localStorage.
- * * @param {VentData} ventData - The data for the vent being created.
- * @returns {Promise<{ trackingId: string, [key: string]: any }>} The server response containing the tracking ID.
- * @throws {Error} Throws an error if the server rejects the vent or the fetch fails.
- */
-window.saveVent = async function (ventData) {
+// 1. We define the exact shape of the data using an interface instead of JSDoc
+interface VentData {
+    content: string;
+}
+
+interface ServerResponse {
+    trackingId?: string;
+    success?: boolean;
+    error?: string;
+    [key: string]: any;
+}
+
+// 2. We apply those types directly to the function parameters and return values
+export const saveVent = async function (ventData: VentData): Promise<ServerResponse> {
     try {
         const response = await fetch('/api/vent', {
             credentials: 'include',
@@ -18,14 +22,10 @@ window.saveVent = async function (ventData) {
             body: JSON.stringify(ventData)
         });
 
-        const result = await response.json();
-        if (!response.ok)
-            throw new Error(result.error || 'Server rejected vent');
+        const result: ServerResponse = await response.json();
+        if (!response.ok) throw new Error(result.error || 'Server rejected vent');
 
-        // Save the Vent Tracking ID locally so the anonymous ventor keeps a receipt
-        let localReceipts = JSON.parse(
-            localStorage.getItem('my_vent_receipts') || '[]'
-        );
+        let localReceipts = JSON.parse(localStorage.getItem('my_vent_receipts') || '[]');
         localReceipts.push({
             trackingId: result.trackingId,
             date: new Date().toISOString(),
@@ -40,11 +40,7 @@ window.saveVent = async function (ventData) {
     }
 };
 
-/**
- * Fetches the list of available vents from the server.
- * * @returns {Promise<Array<Object>>} A promise that resolves to an array of vent objects, or an empty array if the fetch fails.
- */
-window.getVents = async function () {
+export const getVents = async function (): Promise<any[]> {
     try {
         const response = await fetch('/api/vents', {
             credentials: 'include',
@@ -63,19 +59,18 @@ window.getVents = async function () {
     }
 };
 
-/**
- * Deletes a specific vent from the server, handling CSRF token retrieval if missing.
- * * @param {string|number} ventId - The unique identifier of the vent to delete.
- * @returns {Promise<{ success?: boolean, error?: string, [key: string]: any }>} A promise that resolves to the server's response object.
- */
-window.deleteVent = async function (ventId) {
+export const deleteVent = async function (ventId: string | number): Promise<ServerResponse> {
     let tokenMatch = document.cookie.match(/csrf_token=([^;]+)/);
-    let csrfToken = tokenMatch ? tokenMatch[1] : null;
+    let csrfToken: string | null = tokenMatch ? tokenMatch[1] : null;
 
     if (!csrfToken) {
         const res = await fetch('/api/csrf-token');
         const data = await res.json();
         csrfToken = data.csrfToken;
+    }
+
+    if (!csrfToken) {
+        throw new Error("Cannot delete: CSRF token is missing.");
     }
 
     try {
@@ -88,12 +83,17 @@ window.deleteVent = async function (ventId) {
             }
         });
 
-        const result = await response.json();
+        const result: ServerResponse = await response.json();
         if (!response.ok) throw new Error(result.error);
 
         return result;
-    } catch (err) {
+    } catch (err: any) {
         console.error('Delete failed:', err.message);
         return { success: false, error: err.message };
     }
 };
+
+// Ensure functions are attached to the global window object if needed elsewhere
+(window as any).saveVent = saveVent;
+(window as any).getVents = getVents;
+(window as any).deleteVent = deleteVent;
