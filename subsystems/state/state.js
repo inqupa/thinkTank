@@ -1,11 +1,38 @@
 import defaultStateData from '../../public/data/default_state.json';
 
+/**
+ * @typedef {Object} UserState
+ * @property {string} name - The user's name.
+ * @property {string} bio - The user's biography.
+ * @property {string} email - The user's email address.
+ */
+
+/**
+ * @typedef {Object} UIState
+ * @property {string} theme - The current UI theme ('light' or 'dark').
+ * @property {boolean} dismissedSuggestion - Whether the user has dismissed the theme suggestion.
+ */
+
+/**
+ * @typedef {Object} DataState
+ * @property {number} visitCount - Number of times the user has visited.
+ */
+
+/**
+ * @typedef {Object} AppState
+ * @property {UserState} user - User-specific state data.
+ * @property {UIState} ui - User interface state data.
+ * @property {DataState} data - Application data state.
+ * @property {Array<{key: string, callback: Function}>} subscribers - List of state change subscribers.
+ */
+
 let saveTimeout = null;
 // 1. Try to load existing state from the hard drive first
 const savedState = localStorage.getItem('vent_app_state');
 const parsedState = savedState ? JSON.parse(savedState) : {};
 
 // 2. Define initialState, merging saved data if it exists
+/** @type {AppState} */
 let initialState = {
     user: { name: '', bio: '', email: '', ...(parsedState.user || {}) },
     ui: {
@@ -24,6 +51,11 @@ initialState.subscribers = [];
 // 3. Create the Proxy immediately
 window.appState = createPersistentState(initialState);
 
+/**
+ * Asynchronously loads default state data from a JSON file and merges it into the initial state
+ * if no state has been saved previously.
+ * @returns {Promise<void>}
+ */
 async function loadInitialState() {
     const saved = localStorage.getItem('app_state_exists');
     if (!saved) {
@@ -40,6 +72,12 @@ async function loadInitialState() {
     }
 }
 
+/**
+ * Updates UI elements based on state changes. Specifically handles theme switching
+ * and text content updates for elements with dynamic IDs.
+ * @param {string} prop - The property that changed (e.g., 'theme').
+ * @param {string|boolean|number} val - The new value of the property.
+ */
 function updateUI(prop, val) {
     if (prop === 'theme') {
         // Ensure document.documentElement is used for global data-theme attribute
@@ -60,6 +98,11 @@ function updateUI(prop, val) {
 }
 
 // --- NEW DEBOUNCE LOGIC ---
+/**
+ * Saves the current application state to localStorage.
+ * Uses a debounce mechanism to prevent excessive writes by waiting 2 seconds after the last state change.
+ * @returns {void}
+ */
 function debouncedSaveState() {
     // Clear the previous timeout if it exists
     if (saveTimeout) {
@@ -91,6 +134,12 @@ function debouncedSaveState() {
 }
 // --------------------------
 
+/**
+ * Wraps the application state in a Proxy to detect changes, trigger subscribers,
+ * and initiate saves. Prevents infinitely deep proxying.
+ * @param {Object} state - The raw state object to proxy.
+ * @returns {Proxy} The proxy-wrapped state object.
+ */
 function createPersistentState(state) {
     const MAX_DEPTH = 3; // Prevent overly deep nested state
 
@@ -162,6 +211,11 @@ function createPersistentState(state) {
 }
 
 // Time-Based Auto-Detection
+/**
+ * Automatically suggests a theme ('light' or 'dark') based on the user's local time,
+ * applying 'dark' between 6 PM and 6 AM if no manual theme is set.
+ * @returns {void}
+ */
 function applyTimeTheme() {
     // Only auto-suggest if no manual theme is saved yet
     if (!localStorage.getItem('theme')) {
@@ -172,6 +226,11 @@ function applyTimeTheme() {
 }
 
 // Enhanced Selective Subscription Helper
+/**
+ * Subscribes a callback function to listen for changes on a specific state key.
+ * @param {string} key - The state key to listen for (e.g., 'theme', 'user', or '*').
+ * @param {Function} callback - The function to execute when the state changes.
+ */
 window.subscribeToState = (key, callback) => {
     if (typeof callback === 'function') {
         // Store the callback along with the key it cares about
@@ -180,6 +239,11 @@ window.subscribeToState = (key, callback) => {
     }
 };
 
+/**
+ * Initializes the entire state management system.
+ * Loads defaults, registers core subscribers, applies current themes, and runs time detection.
+ * @returns {Promise<void>}
+ */
 async function startStateSystem() {
     // Load defaults asynchronously
     await loadInitialState();
