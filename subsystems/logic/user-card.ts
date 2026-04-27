@@ -1,5 +1,12 @@
-// subsystems/logic/user-card.js
+// subsystems/logic/user-card.ts
 import userStyles from '../../skin/components/user-card.css?inline';
+
+interface UserData {
+    name: string;
+    email: string;
+    joined: string;
+    [key: string]: any;
+}
 
 class UserCard extends HTMLElement {
     constructor() {
@@ -7,12 +14,12 @@ class UserCard extends HTMLElement {
         this.attachShadow({ mode: 'open' });
     }
 
-    async connectedCallback() {
+    async connectedCallback(): Promise<void> {
         this.renderLoading();
         await this.loadUserData();
     }
 
-    async loadUserData() {
+    async loadUserData(): Promise<void> {
         try {
             const response = await fetch('/api/user/me');
             if (!response.ok) {
@@ -23,7 +30,7 @@ class UserCard extends HTMLElement {
                 }
                 throw new Error('Failed to load profile');
             }
-            const data = await response.json();
+            const data: UserData = await response.json();
             this.render(data);
         } catch (err) {
             console.error(err);
@@ -31,15 +38,17 @@ class UserCard extends HTMLElement {
         }
     }
 
-    renderLoading() {
-        this.shadowRoot.innerHTML = `<p style="text-align: center; color: var(--text-primary); font-family: sans-serif;">Loading profile data...</p>`;
+    renderLoading(): void {
+        (this.shadowRoot as ShadowRoot).innerHTML = 
+            `<p style="text-align: center; color: var(--text-primary); font-family: sans-serif;">Loading profile data...</p>`;
     }
 
-    renderError() {
-        this.shadowRoot.innerHTML = `<p style="text-align: center; color: red; font-family: sans-serif;">Error loading profile.</p>`;
+    renderError(): void {
+        (this.shadowRoot as ShadowRoot).innerHTML = 
+            `<p style="text-align: center; color: red; font-family: sans-serif;">Error loading profile.</p>`;
     }
 
-    render(userData) {
+    render(userData: UserData | null): void {
         if (!userData) return;
 
         const joinedDate = new Date(userData.joined).toLocaleDateString(
@@ -48,12 +57,12 @@ class UserCard extends HTMLElement {
         );
         const initial = userData.email.charAt(0).toUpperCase();
 
-        this.shadowRoot.innerHTML = `
+        (this.shadowRoot as ShadowRoot).innerHTML = `
         <style>${userStyles}</style>
         <div class="header">
                 <div class="profile-picture">${initial}</div>
                 <h1 class="username">${userData.name}</h1>
-                <div class="role">Think Tank Member</div>
+                <div class="role">Vent Member</div>
             </div>
             <div class="details-grid">
                 <div class="detail-item">
@@ -69,13 +78,14 @@ class UserCard extends HTMLElement {
         `;
 
         // Handle Logout by destroying the cookie
-        this.shadowRoot
-            .getElementById('logout')
-            .addEventListener('click', () => {
+        const logoutBtn = (this.shadowRoot as ShadowRoot).getElementById('logout') as HTMLButtonElement | null;
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', () => {
                 document.cookie =
                     'vent_session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
                 window.location.href = '/index.html';
             });
+        }
     }
 }
 customElements.define('user-card', UserCard);
