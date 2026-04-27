@@ -1,4 +1,4 @@
-// vite.config.js
+// vite.config.ts
 import { defineConfig } from 'vite';
 import { VitePWA } from 'vite-plugin-pwa';
 
@@ -12,7 +12,8 @@ export default defineConfig({
         type: 'module'
       }, 
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,json}']
+        // TS Fix: Added 'ts' to the caching patterns
+        globPatterns: ['**/*.{js,ts,css,html,ico,png,svg,json}']
       }
     })
   ],
