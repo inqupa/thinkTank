@@ -92,12 +92,14 @@ function updateUI(prop: string, val: any): void {
     });
 }
 
-function debouncedSaveState(): void {
+export function debouncedSaveState(): void {
     if (saveTimeout) {
         clearTimeout(saveTimeout);
     }
 
     saveTimeout = setTimeout(() => {
+        saveTimeout = null;
+        
         if (!window.appState) return;
 
         const stateToSave = {
@@ -115,7 +117,7 @@ function debouncedSaveState(): void {
     }, 2000);
 }
 
-function createPersistentState<T extends object>(state: T): T {
+export function createPersistentState<T extends object>(state: T): T {
     const MAX_DEPTH = 3;
 
     function buildProxy(targetObj: any, currentDepth: number): any {

@@ -4,7 +4,8 @@
   "description": "",
   "main": "subsystems/routers/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
     "dev:ui": "vite",
     "dev:api": "wrangler dev --persist-to ../wrangler-data",
     "build": "vite build",
@@ -22,10 +23,13 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
+    "@vitest/ui": "^4.1.5",
     "eslint": "^10.2.1",
+    "happy-dom": "^20.9.0",
     "prettier": "^3.8.3",
     "typescript": "^6.0.3",
     "vite": "^8.0.10",
-    "vite-plugin-pwa": "^1.2.0"
+    "vite-plugin-pwa": "^1.2.0",
+    "vitest": "^4.1.5"
   }
 }

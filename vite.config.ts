@@ -1,5 +1,5 @@
 // vite.config.ts
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
@@ -17,6 +17,7 @@ export default defineConfig({
       }
     })
   ],
+
   server: {
     port: 3000,
     open: true,
@@ -28,6 +29,7 @@ export default defineConfig({
       }
     }
   },
+
   build: {
     outDir: 'dist',
     emptyOutDir: true,
@@ -39,5 +41,10 @@ export default defineConfig({
         problem: 'skeleton/problem_placeholder.html'
       }
     }
+  },
+
+  test: {
+    environment: 'happy-dom', // Simulates the browser environment
+    globals: true, // Allows us to use describe/it without importing them every time
   }
 });
