@@ -49,6 +49,9 @@ jobs:
       - name: Build frontend
         run: npm run build
 
+      - name: Install Wrangler
+        run: npm install -g wrangler@4.86.0
+
       - name: Deploy to Cloudflare
         uses: cloudflare/wrangler-action@v3
         with:
