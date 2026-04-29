@@ -44,7 +44,12 @@ export default defineConfig({
   },
 
   test: {
-    environment: 'happy-dom', // Simulates the browser environment
-    globals: true, // Allows us to use describe/it without importing them every time
+    environment: 'happy-dom',
+    globals: true,
+    exclude: [
+      '**/node_modules/**',
+      '**/dist/**',
+      '**/tools/tests/e2e/**'
+    ]
   }
 });
