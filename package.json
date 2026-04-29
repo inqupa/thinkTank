@@ -12,7 +12,7 @@
     "dev:api": "wrangler dev --persist-to ../wrangler-data",
     "build": "vite build",
     "deploy": "npm run build && wrangler deploy",
-    "format": "prettier --write \"**/*.{js,css,html}\"",
+    "format": "prettier --write \"**/*.{js,mjs,ts,css,html,json,jsonc}\"",
     "lint": "eslint .",
     "db:list": "wrangler d1 execute vent_black --command='SELECT * FROM vents;' --persist-to ../wrangler-data",
     "db:setup:local": "wrangler d1 execute vent_black --local --persist-to=../wrangler-data --file=./sql/01_create_solvers.sql && wrangler d1 execute vent_black --local --persist-to=../wrangler-data --file=./sql/02_create_magic_links.sql && wrangler d1 execute vent_black --local --persist-to=../wrangler-data --file=./sql/03_create_vents.sql && wrangler d1 execute vent_black --local --persist-to=../wrangler-data --file=./sql/04_create_anonymous_visitors.sql",
