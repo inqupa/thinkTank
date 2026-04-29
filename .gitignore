@@ -1,26 +1,33 @@
-# build artifacts
-.vite/
-
-# miscellaneous folders
-.vscode/
+# Dependencies
 node_modules/
 
+# Build Outputs & Cache
+dist/
+dev-dist/
+.vite/
 
-# wrangler files
-.wrangler
+# Environment Variables & Secrets
+.env
+.env*
+!.env.example
 .dev.vars
 .dev.vars*
 !.dev.vars.example
-.env*
-!.env.example
 
+# Cloudflare Wrangler
+.wrangler/
 
+# Playwright Testing
+playwright-report/
+test-results/
+blob-report/
+playwright/.cache/
+playwright/.auth/
 
+# IDE & System Files
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Miscellaneous
 !.gitkeep
-
-# Playwright
-/test-results/
-/playwright-report/
-/blob-report/
-/playwright/.cache/
-/playwright/.auth/
